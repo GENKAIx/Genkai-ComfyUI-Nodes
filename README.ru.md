@@ -1,4 +1,4 @@
-[English](https://github.com/GENKAIx/Genkai-ComfyUI-Nodes/tree/main#english) | [Русский](https://github.com/GENKAIx/Genkai-ComfyUI-Nodes/tree/main#russian)
+[English](README.md) | **Русский**
 
 # Genkai ComfyUI Nodes
 
