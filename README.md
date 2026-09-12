@@ -6,18 +6,36 @@ A custom node pack for **ComfyUI** by [GENKAI](https://github.com/GENKAIx): sync
 
 The node interface is in English. No additional models or cloud services are required.
 
+Follow GENKAI on [Telegram · @genkai_ai](https://t.me/genkai_ai).
+
 ## PromptSync
 
-https://github.com/user-attachments/assets/8b462f83-214d-4984-9c3d-f86ad55bd60a
+https://github.com/user-attachments/assets/b0ac1e71-b139-49ce-98a5-c3e015adcd86
 
 Watch a generated video alongside its original timed prompt. Check whether actions, camera cuts, and dialogue happen at the intended moments.
 
 - **Left:** video player, clickable timeline markers, and an audio waveform.
 - **Right:** the original prompt, preserving its order, spacing, and line breaks. Markdown remains part of the original text.
-- The current timed section is highlighted in **gold**; general camera, style, lighting, and sound directions are shown in **blue**.
+- The current timed section is highlighted; general camera, style, lighting, and sound directions use a separate color treatment.
+- Choose a reading style from **Style** beside **Auto-scroll**. The selection is saved with the workflow and can be changed without restarting playback.
 - Optional auto-scroll follows playback.
 - Click a time marker or the waveform to seek through the video.
 - Drag the node's bottom-right corner to make more room for the player and prompt.
+
+[Supported timing syntax and prompt examples](#supported-timing-syntax)
+
+### Reading styles
+
+Available in **both PromptSync versions**:
+
+| Style | Appearance |
+| --- | --- |
+| **Spotlight · Serif** (default) | Full-width warm highlight for the active scene, serif text, and a timestamp in the left margin. |
+| **Cards · Sans** | Separate scene cards, a sans-serif font, and a gold border around the active card. |
+| **Script · Mono** | Compact monospaced text with a blue active-scene background. |
+| **Classic · Inline** | Original serif layout with gold highlighting behind active text lines. |
+
+Styles change the presentation, keeping the original prompt text and timing intact.
 
 ### Connections
 
@@ -38,6 +56,8 @@ The waveform is decoded locally from the actual audio. A missing audio track and
 ![PromptSync + Save node with video preview, timed prompt, and audio waveform](docs/images/promptsync-save.png)
 
 A separate output node that combines the PromptSync viewer with video saving through **VHS Video Combine**.
+
+Includes the same [four reading styles](#reading-styles), auto-scroll, and audio waveform. [See supported timing syntax and examples](#supported-timing-syntax).
 
 Connect `prompt` and one source: `images`, `video`, or `filenames`. For latents on `images`, also connect `vae`. The `audio` input adds sound to image frames or overrides the source video's audio.
 

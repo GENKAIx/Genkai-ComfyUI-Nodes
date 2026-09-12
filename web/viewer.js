@@ -14,7 +14,7 @@ function element(tag, className, text) {
     return item;
 }
 
-export function createViewer({resolveVideo, resolveWaveform, preferences = {}, onPreferences = () => {}}) {
+export function createViewer({resolveVideo, resolveWaveform, preferences = {}, onPreferences = () => {}, enablePromptStyles = false}) {
     const root = element("div", "gk-video-reader"); root.tabIndex = 0; root.lang = "en";
     const controller = new AbortController();
     const on = (target, event, handler) => target.addEventListener(event, handler, {signal: controller.signal});
@@ -41,6 +41,24 @@ export function createViewer({resolveVideo, resolveWaveform, preferences = {}, o
     const auto = element("input"); auto.type = "checkbox"; auto.checked = preferences.autoScroll !== false;
     autoLabel.append(auto, document.createTextNode(" Auto-scroll"));
     heading.append(element("span", "gk-label", "PROMPT"), autoLabel);
+    const styles = [
+        ["spotlight", "Spotlight · Serif"],
+        ["cards", "Cards · Sans"],
+        ["script", "Script · Mono"],
+        ["classic", "Classic · Inline"],
+    ];
+    let styleSelect;
+    if (enablePromptStyles) {
+        const controls = element("div", "gk-prompt-controls");
+        const styleLabel = element("label", "gk-style-label");
+        styleLabel.append(document.createTextNode("Style"));
+        styleSelect = element("select", "gk-style-select");
+        styleSelect.setAttribute("aria-label", "Prompt style");
+        for (const [value, label] of styles) {
+            const option = element("option", "", label); option.value = value; styleSelect.append(option);
+        }
+        styleLabel.append(styleSelect); controls.append(styleLabel, autoLabel); heading.append(controls);
+    }
     const legend = element("div", "gk-legend");
     legend.append(element("span", "gk-timed-key", "Timed action"), element("span", "gk-global-key", "General direction"));
     const warning = element("div", "gk-warning"); warning.hidden = true;
@@ -48,6 +66,21 @@ export function createViewer({resolveVideo, resolveWaveform, preferences = {}, o
     const prose = element("div", "gk-prose"); panel.append(prose);
     right.append(heading, legend, warning, panel);
     root.append(left, right);
+
+    function savePreferences() {
+        preferences = {...preferences, autoScroll: auto.checked};
+        if (enablePromptStyles) preferences.promptStyle = styleSelect.value;
+        onPreferences(preferences);
+    }
+    function applyStyle(value) {
+        if (!enablePromptStyles) return;
+        const position = panel.scrollTop / Math.max(1, panel.scrollHeight - panel.clientHeight);
+        const style = styles.some(([id]) => id === value) ? value : "spotlight";
+        styleSelect.value = style; root.dataset.promptStyle = style;
+        // Preserve the reading position when auto-scroll is off.
+        if (auto.checked) scrollActive(false);
+        else panel.scrollTop = position * Math.max(0, panel.scrollHeight - panel.clientHeight);
+    }
 
     function scrollActive(smooth) {
         if (!auto.checked) return;
@@ -107,7 +140,11 @@ export function createViewer({resolveVideo, resolveWaveform, preferences = {}, o
         warning.textContent = parsed.warning; warning.hidden = !parsed.warning;
         for (const part of parsed.parts) {
             const span = element("span", part.kind === "timed" ? "gk-fragment" : "gk-global", part.text);
-            if (part.kind === "timed") fragments.push({element: span, segmentId: part.segmentId});
+            if (part.kind === "timed") {
+                fragments.push({element: span, segmentId: part.segmentId});
+                if (enablePromptStyles) span.dataset.time = formatTime(segments.find(s => s.id === part.segmentId).start);
+            }
+            if (enablePromptStyles && !part.text.trim()) span.classList.add("gk-whitespace");
             prose.append(span);
         }
         const times = [...new Set([0, ...segments.flatMap(s => [s.start, ...(Number.isFinite(s.explicitEnd) ? [s.explicitEnd] : [])])])].filter(time => !(video.duration > 0) || time <= video.duration).sort((a, b) => a - b);
@@ -129,11 +166,12 @@ export function createViewer({resolveVideo, resolveWaveform, preferences = {}, o
     on(video, "loadedmetadata", () => { seek.max = String(video.duration || 1); seek.disabled = !(video.duration > 0); status.hidden = true; render(); });
     on(video, "error", () => { status.hidden = false; status.textContent = "Video unavailable. Check the file or use MP4/H.264."; });
     on(seek, "input", () => jump(Number(seek.value)));
-    on(auto, "change", () => { onPreferences({autoScroll: auto.checked}); scrollActive(false); });
+    on(auto, "change", () => { savePreferences(); scrollActive(false); });
+    if (styleSelect) on(styleSelect, "change", () => { applyStyle(styleSelect.value); savePreferences(); });
     for (const name of ["pointerdown", "pointerup", "click", "dblclick", "wheel"]) on(root, name, e => e.stopPropagation());
     on(root, "keydown", async e => {
         e.stopPropagation();
-        if (/INPUT|TEXTAREA|BUTTON/.test(e.target.tagName)) return;
+        if (/INPUT|TEXTAREA|BUTTON|SELECT|OPTION/.test(e.target.tagName)) return;
         if (e.code === "Space") {
             e.preventDefault();
             if (!video.paused) video.pause();
@@ -144,6 +182,7 @@ export function createViewer({resolveVideo, resolveWaveform, preferences = {}, o
         }
         if (e.code === "ArrowLeft" || e.code === "ArrowRight") { e.preventDefault(); jump(video.currentTime + (e.code === "ArrowRight" ? 5 : -5)); }
     });
+    applyStyle(preferences.promptStyle);
     render();
     return {
         element: root,
@@ -153,7 +192,7 @@ export function createViewer({resolveVideo, resolveWaveform, preferences = {}, o
             waveform?.load(data?.video);
             render();
         },
-        setPreferences(value) { auto.checked = value?.autoScroll !== false; },
+        setPreferences(value) { preferences = value ?? {}; auto.checked = preferences.autoScroll !== false; applyStyle(preferences.promptStyle); },
         dispose() { disposed = true; waveform?.dispose(); controller.abort(); resize.disconnect(); cancelAnimationFrame(frame); video.pause(); video.removeAttribute("src"); video.load(); root.remove(); },
     };
 }

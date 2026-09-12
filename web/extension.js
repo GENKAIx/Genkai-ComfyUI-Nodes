@@ -70,6 +70,7 @@ app.registerExtension({
                 prefix.serializeValue = () => applyTextReplacements(app, prefix.value);
             }
             this.genkaiViewer = createViewer({
+                enablePromptStyles: true,
                 resolveVideo: descriptor => api.apiURL(`/view?${new URLSearchParams({...descriptor})}`),
                 resolveWaveform: descriptor => api.apiURL(`/genkai/audio-waveform?${new URLSearchParams({...descriptor})}`),
                 preferences: this.properties.genkaiPreferences,

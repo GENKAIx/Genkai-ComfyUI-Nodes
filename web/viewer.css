@@ -39,3 +39,39 @@
 .gk-waveform-lane canvas { display:block; width:100%; height:100%; pointer-events:none; }
 .gk-waveform-playhead { position:absolute; top:0; bottom:0; width:2px; background:var(--gold); transform:translateX(-1px); pointer-events:none; }
 .gk-waveform-status { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:8px; color:#9fb8c2; font:11px/1.4 system-ui,sans-serif; pointer-events:none; }
+
+/* Shared reading styles for both PromptSync viewers. */
+.gk-video-reader[data-prompt-style] .gk-prompt-header { flex-wrap:wrap; }
+.gk-prompt-controls { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:10px 14px; margin-left:auto; }
+.gk-style-label { display:flex; align-items:center; gap:7px; color:#c7c5ba; font:11px/1.4 system-ui,sans-serif; }
+.gk-video-reader .gk-style-select { max-width:100%; min-width:0; border:1px solid #626052; border-radius:5px; background:#292a26; color:#f0eadc; padding:5px 7px; font:12px/1.4 system-ui,sans-serif; cursor:pointer; }
+.gk-video-reader .gk-style-select:hover { border-color:var(--gold); }
+.gk-video-reader:where([data-prompt-style]:not([data-prompt-style="classic"])) .gk-prompt { padding:0; background:#191b18; }
+.gk-video-reader:where([data-prompt-style]:not([data-prompt-style="classic"])) .gk-prose { white-space:normal; }
+.gk-video-reader:where([data-prompt-style]:not([data-prompt-style="classic"])) .gk-prose > span { display:block; position:relative; white-space:pre-wrap; padding:20px 22px; }
+.gk-video-reader:where([data-prompt-style]:not([data-prompt-style="classic"])) .gk-fragment { border-left:3px solid transparent; color:#c4c1b6; background:transparent; }
+.gk-video-reader:where([data-prompt-style]:not([data-prompt-style="classic"])) .gk-fragment.is-active { border-left-color:var(--gold); background:#3b301d; color:#fff2d7; }
+.gk-video-reader:where([data-prompt-style]:not([data-prompt-style="classic"])) .gk-global { color:#afd1dc; background:#1c292d; border-left:3px solid #4b7e8f; }
+.gk-video-reader[data-prompt-style]:not([data-prompt-style="classic"]) .gk-prose > .gk-whitespace { display:inline; margin:0; padding:0; border:0; background:none; }
+
+/* Reference-inspired full-width highlight with a timestamp gutter. */
+.gk-video-reader[data-prompt-style="spotlight"] .gk-prose { font:16px/1.8 Georgia,'Times New Roman',serif; }
+.gk-video-reader[data-prompt-style="spotlight"] .gk-prose > .gk-fragment { padding-left:76px; border-bottom:1px solid #34352b; }
+.gk-video-reader[data-prompt-style="spotlight"] .gk-fragment::before { content:attr(data-time); position:absolute; top:25px; left:15px; color:#aaa68f; font:11px/1.4 ui-monospace,monospace; }
+.gk-video-reader[data-prompt-style="spotlight"] .gk-fragment.is-active::before { color:#ffd575; }
+
+/* Spacious sans-serif scene cards. */
+.gk-video-reader[data-prompt-style="cards"] .gk-prose { font:16px/1.75 'Segoe UI',system-ui,sans-serif; }
+.gk-video-reader[data-prompt-style="cards"] .gk-right .gk-prompt { padding:12px; }
+.gk-video-reader[data-prompt-style="cards"] .gk-prose > .gk-fragment,
+.gk-video-reader[data-prompt-style="cards"] .gk-prose > .gk-global { margin:0 0 12px; padding:18px 20px; border:1px solid #44453d; border-radius:10px; background:#252824; }
+.gk-video-reader[data-prompt-style="cards"] .gk-prose > .gk-fragment.is-active { background:#363020; border-color:#deb764; box-shadow:inset 0 0 0 1px #deb764; color:#fff4da; }
+.gk-video-reader[data-prompt-style="cards"] .gk-prose > .gk-global { background:#202e34; border-color:#4a7381; color:#b8dce7; }
+
+/* Compact script typography with a distinct blue active scene. */
+.gk-video-reader[data-prompt-style="script"] .gk-prose { font:14px/1.85 Consolas,'SFMono-Regular',ui-monospace,monospace; }
+.gk-video-reader[data-prompt-style="script"] .gk-prose > .gk-fragment { padding:16px 20px; border-bottom:1px solid #393c39; }
+.gk-video-reader[data-prompt-style="script"] .gk-prose > .gk-fragment.is-active { background:#203947; border-left-color:#8dd9f1; color:#e5f7ff; }
+.gk-video-reader[data-prompt-style="script"] .gk-prose > .gk-global { color:#cdc2ac; background:#29271f; border-left-color:#958258; font:14px/1.75 'Segoe UI',system-ui,sans-serif; }
+.gk-video-reader[data-prompt-style="script"] .gk-timed-key { color:#8dd9f1; }
+.gk-video-reader[data-prompt-style="script"] .gk-global-key { color:#cdc2ac; }
