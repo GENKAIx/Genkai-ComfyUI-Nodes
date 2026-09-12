@@ -1,12 +1,16 @@
-**English** | [Русский](README.ru.md)
+<p align="center">
+  <strong>English</strong> &nbsp;|&nbsp; <a href="README.ru.md">Русский</a>
+</p>
 
-# Genkai ComfyUI Nodes
+<h1 align="center">Genkai ComfyUI Nodes</h1>
 
-A custom node pack for **ComfyUI** by [GENKAI](https://github.com/GENKAIx): synchronized video and prompt playback, video saving, file search, and image canvas expansion.
+<p align="center">
+  <img src="docs/images/genkai-banner.png" alt="GENKAI — golden-hour landscape" width="100%">
+</p>
 
-The node interface is in English. No additional models or cloud services are required.
-
-Follow GENKAI on [Telegram · @genkai_ai](https://t.me/genkai_ai).
+<p align="center">
+  <a href="https://t.me/genkai_ai"><img src="docs/images/telegram-genkai.svg" alt="GENKAI on Telegram" width="244" height="42"></a>
+</p>
 
 ## PromptSync
 

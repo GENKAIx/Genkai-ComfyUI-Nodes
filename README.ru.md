@@ -1,12 +1,16 @@
-[English](README.md) | **Русский**
+<p align="center">
+  <a href="README.md">English</a> &nbsp;|&nbsp; <strong>Русский</strong>
+</p>
 
-# Genkai ComfyUI Nodes
+<h1 align="center">Genkai ComfyUI Nodes</h1>
 
-Авторский пак кастомных нод для **ComfyUI** от [GENKAI](https://github.com/GENKAIx): просмотр видео с синхронизированным промптом, сохранение видео, поиск файлов и расширение изображения.
+<p align="center">
+  <img src="docs/images/genkai-banner.png" alt="GENKAI — golden-hour landscape" width="100%">
+</p>
 
-Интерфейс нод — на английском. Дополнительные модели и облачные сервисы не требуются.
-
-Канал GENKAI в [Telegram · @genkai_ai](https://t.me/genkai_ai).
+<p align="center">
+  <a href="https://t.me/genkai_ai"><img src="docs/images/telegram-genkai.svg" alt="GENKAI on Telegram" width="244" height="42"></a>
+</p>
 
 ## PromptSync
 

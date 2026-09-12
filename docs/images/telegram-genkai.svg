@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="244" height="42" viewBox="0 0 244 42" role="img" aria-label="GENKAI on Telegram">
+  <defs>
+    <linearGradient id="gold" x2="1" y2="1">
+      <stop stop-color="#ffdc9a"/>
+      <stop offset="1" stop-color="#d99842"/>
+    </linearGradient>
+  </defs>
+  <rect x="0.5" y="0.5" width="243" height="41" rx="9" fill="#29231c" stroke="#9e743e"/>
+  <rect x="1" y="1" width="43" height="40" rx="8" fill="url(#gold)"/>
+  <path d="M12 20.5 32 13l-4.1 17-6.1-4.6-3.4 3 .6-5.3 9.5-7.1-11.6 6.1z" fill="#352819" stroke-linejoin="round"/>
+  <text x="59" y="26" fill="#ffe2aa" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" letter-spacing="1.4">GENKAI</text>
+  <path d="M130 13v16" stroke="#79603e"/>
+  <text x="144" y="25.5" fill="#e1c8a4" font-family="Arial,Helvetica,sans-serif" font-size="11" letter-spacing="1">TELEGRAM</text>
+</svg>
