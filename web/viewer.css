@@ -1,0 +1,41 @@
+.gk-video-reader { --gold:#efbd50; --line:#44433d; --global:#91b6c4; box-sizing:border-box; width:100%; height:100%; min-height:0; background:#222321; color:#e0ddd3; font:13px/1.5 system-ui,sans-serif; padding:14px; display:grid; grid-template-columns:minmax(0,1.08fr) minmax(0,1fr); gap:22px; overflow:hidden; border:1px solid #55554d; border-radius:7px; color-scheme:dark; --comfy-widget-min-height:420; }
+.gk-video-reader * { box-sizing:border-box; }
+.gk-video-reader [hidden] { display:none!important; }
+.gk-video-reader :focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+.gk-left { min-width:0; min-height:0; overflow-y:auto; scrollbar-width:thin; }
+.gk-label { color:#c4bc9e; font-size:11px; letter-spacing:.15em; font-weight:600; margin:0 0 10px; }
+.gk-stage { background:#090a09; border:1px solid var(--line); }
+.gk-stage video { display:block; width:100%; object-fit:contain; background:#090a09; aspect-ratio:16/9; }
+.gk-status,.gk-warning { color:#b5b1a6; font-size:12px; padding:8px 0; }
+.gk-timeline { position:relative; margin-top:15px; }
+.gk-track { position:absolute; left:7px; right:7px; top:9px; height:4px; background:#53554f; pointer-events:none; border-radius:2px; }
+.gk-progress { height:100%; background:var(--gold); border-radius:2px; }
+.gk-seek { display:block; position:relative; margin:0; padding:0; width:100%; height:22px; appearance:none; background:transparent; cursor:pointer; border:0; }
+.gk-seek::-webkit-slider-runnable-track { height:4px; background:transparent; border:0; }
+.gk-seek::-webkit-slider-thumb { appearance:none; width:14px; height:14px; border-radius:50%; background:var(--gold); border:2px solid #222321; outline:1px solid var(--gold); margin-top:-5px; }
+.gk-seek::-moz-range-track { height:4px; background:transparent; border:0; }
+.gk-seek::-moz-range-thumb { width:10px; height:10px; border-radius:50%; background:var(--gold); border:2px solid #222321; outline:1px solid var(--gold); }
+.gk-ruler { position:relative; width:100%; min-height:0; }
+.gk-tick { position:absolute; top:0; width:1px; background:#747369; pointer-events:none; }
+.gk-video-reader .gk-time-button { position:absolute; border:1px solid #5a594f; border-radius:3px; background:#2d2e2a; color:#c7c5ba; padding:3px 7px; font:11px/17px ui-monospace,monospace; white-space:nowrap; cursor:pointer; }
+.gk-video-reader .gk-time-button:hover,.gk-video-reader .gk-time-button.is-active { color:#ffe4a0; border-color:var(--gold); background:#433921; }
+.gk-clock { color:#aaa99e; font:11px ui-monospace,monospace; text-align:right; margin-top:8px; }
+.gk-right { display:flex; flex-direction:column; min-height:0; min-width:0; height:100%; border:1px solid var(--line); }
+.gk-prompt-header { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--line); flex-shrink:0; }
+.gk-prompt-header .gk-label { margin:0; }
+.gk-auto { display:flex; align-items:center; gap:5px; color:#b7b5a9; font-size:11px; cursor:pointer; white-space:nowrap; }
+.gk-auto input { accent-color:var(--gold); }
+.gk-legend { padding:8px 16px; display:flex; gap:18px; font-size:10px; flex-shrink:0; }
+.gk-timed-key { color:var(--gold); }.gk-global-key { color:var(--global); }
+.gk-warning { padding:8px 16px; }
+.gk-prompt { flex:1; min-height:0; overflow-y:auto; padding:8px 18px 20px; scrollbar-width:thin; scrollbar-color:#69695f transparent; }
+.gk-prose { margin:0; font:15px/1.85 Georgia,'Times New Roman',serif; white-space:pre-wrap; overflow-wrap:anywhere; tab-size:4; }
+.gk-global { color:var(--global); }
+.gk-fragment { color:#d4cfbe; box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+.gk-fragment.is-active { background:#504022; color:#fff0c4; }
+.gk-waveform { margin:12px 7px 0; }
+.gk-waveform-label { color:#7bc7df; font:10px/1.5 system-ui,sans-serif; letter-spacing:.12em; margin-bottom:5px; }
+.gk-waveform-lane { position:relative; height:66px; overflow:hidden; border-radius:4px; background:#102c3b; box-shadow:inset 0 0 0 1px #24526b; cursor:crosshair; touch-action:none; }
+.gk-waveform-lane canvas { display:block; width:100%; height:100%; pointer-events:none; }
+.gk-waveform-playhead { position:absolute; top:0; bottom:0; width:2px; background:var(--gold); transform:translateX(-1px); pointer-events:none; }
+.gk-waveform-status { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:8px; color:#9fb8c2; font:11px/1.4 system-ui,sans-serif; pointer-events:none; }
