@@ -1,4 +1,4 @@
-[English](README.md) | **Русский**
+[English](https://github.com/GENKAIx/Genkai-ComfyUI-Nodes/tree/main#english) | [Русский](https://github.com/GENKAIx/Genkai-ComfyUI-Nodes/tree/main#russian)
 
 # Genkai ComfyUI Nodes
 
@@ -6,7 +6,7 @@
 
 Интерфейс нод — на английском. Дополнительные модели и облачные сервисы не требуются.
 
-## PromptSync (genkai)
+## PromptSync
 
 https://github.com/user-attachments/assets/8b462f83-214d-4984-9c3d-f86ad55bd60a
 
@@ -33,9 +33,9 @@ https://github.com/user-attachments/assets/8b462f83-214d-4984-9c3d-f86ad55bd60a
 
 Звуковая волна строится локально по реальному аудио. Отсутствие аудиодорожки и дорожка с тишиной обозначаются отдельно. Временные файлы могут стать недоступны после очистки папки `temp`.
 
-## PromptSync + Save (genkai)
+## PromptSync + Save
 
-![PromptSync + Save (genkai)](docs/images/promptsync-save.png)
+![PromptSync + Save](docs/images/promptsync-save.png)
 
 Отдельная выходная нода с тем же просмотрщиком и сохранением видео через **VHS Video Combine**.
 
@@ -68,9 +68,9 @@ https://github.com/user-attachments/assets/8b462f83-214d-4984-9c3d-f86ad55bd60a
 
 **Автоматическая постановка следующих частей в очередь требует совместимости со стороны VHS.** В версиях VHS, где `requeue_workflow` в `videohelpersuite/utils.py` считает только выходные ноды `VHS_VideoCombine`, в этот список нужно добавить `GenkaiVideoPromptViewerSave`. Этот репозиторий не изменяет файлы VHS автоматически; обычное сохранение без `meta_batch` такой правки не требует. После обновления VHS совместимость нужно проверить повторно.
 
-## Folder Search (genkai)
+## Folder Search
 
-![Folder Search (genkai)](docs/images/folder-search.png)
+![Folder Search](docs/images/folder-search.png)
 
 Ищет файлы в выбранной папке и передаёт результаты дальше по воркфлоу. Подходит для последовательной обработки набора изображений, видео или других файлов.
 
@@ -86,9 +86,9 @@ https://github.com/user-attachments/assets/8b462f83-214d-4984-9c3d-f86ad55bd60a
 
 Выход `output` содержит список или строку в зависимости от режима. Без `infinite_loop` после последнего результата возвращается пустая строка; следующий запуск начинает новый проход. Нода выдаёт следующий файл при очередном выполнении, но сама не запускает очередь ComfyUI. Порядок результатов соответствует обходу файловой системы, без дополнительной сортировки.
 
-## Image Expand With Fill (genkai)
+## Image Expand With Fill
 
-![Image Expand With Fill (genkai)](docs/images/image-expand-with-fill.png)
+![Image Expand With Fill](docs/images/image-expand-with-fill.png)
 
 Увеличивает холст, добавляя указанное число пикселей слева (`left`), справа (`right`), сверху (`top`) и снизу (`bottom`). Работает с одиночным изображением и пачкой `IMAGE`.
 

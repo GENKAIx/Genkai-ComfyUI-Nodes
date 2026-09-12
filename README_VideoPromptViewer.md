@@ -1,8 +1,8 @@
-# PromptSync (genkai)
+# PromptSync
 
 ## + Save
 
-`PromptSync + Save (genkai)` is a separate output node. It uses the installed VHS Video Combine encoder, with frame_rate, loop_count, filename_prefix, format, pix_fmt, crf, save_metadata, trim_to_audio, pingpong and save_output. It supports MP4/H.264 and MP4/H.265. H.264 is the default for browser playback. AV1 is not exposed because the installed FFmpeg does not include the encoder required by the VHS AV1 preset.
+`PromptSync + Save` is a separate output node. It uses the installed VHS Video Combine encoder, with frame_rate, loop_count, filename_prefix, format, pix_fmt, crf, save_metadata, trim_to_audio, pingpong and save_output. It supports MP4/H.264 and MP4/H.265. H.264 is the default for browser playback. AV1 is not exposed because the installed FFmpeg does not include the encoder required by the VHS AV1 preset.
 
 Connect the timed prompt and exactly one source: images/latents (with VAE when needed), VIDEO, or VHS_FILENAMES. AUDIO overrides an existing video's audio when connected. Existing videos are decoded and encoded with the selected settings; use their original FPS to keep the original speed. `save_output=true` writes to ComfyUI output; false writes to temp. The Filenames output uses the VHS type and contains only the final video. Date tokens in filename_prefix are expanded by ComfyUI when queued from the UI.
 
