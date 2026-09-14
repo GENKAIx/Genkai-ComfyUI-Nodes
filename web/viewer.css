@@ -20,6 +20,11 @@
 .gk-video-reader .gk-time-button { position:absolute; border:1px solid #5a594f; border-radius:3px; background:#2d2e2a; color:#c7c5ba; padding:3px 7px; font:11px/17px ui-monospace,monospace; white-space:nowrap; cursor:pointer; }
 .gk-video-reader .gk-time-button:hover,.gk-video-reader .gk-time-button.is-active { color:#ffe4a0; border-color:var(--gold); background:#433921; }
 .gk-clock { color:#aaa99e; font:11px ui-monospace,monospace; text-align:right; margin-top:8px; }
+.gk-video-reader[data-playback-settings] .gk-clock,
+.gk-video-reader[data-playback-settings] .gk-dimensions,
+.gk-video-reader[data-playback-settings] .gk-execution-time,
+.gk-video-reader[data-playback-settings] .gk-seconds-cost { color:#c3c2b8; font:13px/1.6 ui-monospace,monospace; text-align:left; margin:3px 7px 0; overflow-wrap:anywhere; }
+.gk-video-reader[data-playback-settings] .gk-clock { margin-top:10px; }
 .gk-right { display:flex; flex-direction:column; min-height:0; min-width:0; height:100%; border:1px solid var(--line); }
 .gk-prompt-header { display:flex; justify-content:space-between; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--line); flex-shrink:0; }
 .gk-prompt-header .gk-label { margin:0; }
@@ -40,7 +45,7 @@
 .gk-waveform-playhead { position:absolute; top:0; bottom:0; width:2px; background:var(--gold); transform:translateX(-1px); pointer-events:none; }
 .gk-waveform-status { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:8px; color:#9fb8c2; font:11px/1.4 system-ui,sans-serif; pointer-events:none; }
 
-/* Shared reading styles for both PromptSync viewers. */
+/* Experimental prompt layouts are enabled only on the original PromptSync. */
 .gk-video-reader[data-prompt-style] .gk-prompt-header { flex-wrap:wrap; }
 .gk-prompt-controls { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:10px 14px; margin-left:auto; }
 .gk-style-label { display:flex; align-items:center; gap:7px; color:#c7c5ba; font:11px/1.4 system-ui,sans-serif; }

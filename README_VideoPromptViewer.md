@@ -8,9 +8,19 @@ Connect the timed prompt and exactly one source: images/latents (with VAE when n
 
 VHS Batch Manager is supported on the images/latents path, with loop_count=0 and pingpong=false. Automatic requeue requires the VHS `videohelpersuite/utils.py` output counter to recognize `GenkaiVideoPromptViewerSave` alongside `VHS_VideoCombine`. This package does not patch VHS automatically. Check that support before connecting Batch Manager, and again after VHS updates. Ordinary saves without Batch Manager do not require this change.
 
-PromptSync + Save keeps only the final MP4: no metadata PNG and no silent intermediate alongside the audio result. Metadata is always embedded, including the available workflow/API prompt and the original timed prompt (`genkai_timed_prompt`). The `save_metadata` widget stays enabled for compatibility with saved workflows. The Filenames output contains only the final file. Audio is included when supplied by the source video or the AUDIO input; a source without audio remains silent. Previously generated files are not removed.
+PromptSync + Save keeps only the final MP4: no metadata PNG and no silent intermediate alongside the audio result. The `save_metadata` option defaults to true and is editable. When enabled, it embeds the available workflow/API prompt and original timed prompt (`genkai_timed_prompt`); when disabled, these fields are omitted from the saved video. The Filenames output contains only the final file. Audio is included when supplied by the source video or the AUDIO input; a source without audio remains silent. Previously generated files are not removed.
 
 Looping or ping-pong changes the saved duration; prompt timestamps still refer to the saved video's absolute time. No automatic rewrite of the prompt is performed.
+
+## + Save playback and timing
+
+Save settings are collapsed by default. Expand the button above the preview to edit encoding and playback controls. Their values and the open/closed state are stored in node properties or the existing encoding widgets without changing input identifiers.
+
+New videos autoplay. `Repeat preview` defaults to Loop; Once disables looping. Manual pause stops playback. `Sound only on hover` defaults to Hover; Always keeps audio enabled outside the preview. Initial volume is 25%, and changes persist across results and workflow saves. Browser autoplay policy may require a first interaction for sound; blocked audible autoplay falls back to muted playback. These controls never modify the saved media.
+
+Below the waveform, labeled, left-aligned rows show playback position/duration, resolution, workflow time, and time per video second. The timer listens to ComfyUI execution events and uses server timestamps when available, with a local monotonic fallback. It records a successful run from execution_start to execution_success, including downstream work and saving but excluding queue waiting. Errors and interruptions are labeled and do not produce a completed-run ratio. The interface must remain connected to capture the events. Cached runs measure the current execution, not the historical cost of creating cached results. Unknown timing or duration displays a dash.
+
+The ratio is execution seconds divided by video duration in seconds. Timing is retained in the preview data when the workflow is saved; it is not retroactively inserted into an already encoded MP4. No third-party timer node is used.
 
 ## Original viewer and shared timeline
 
@@ -24,6 +34,6 @@ H3 reference alignment instructions, `overall_soundscape` and `non_diegetic_musi
 
 No local-upload, prompt-editor, or fullscreen toolbar is added by this node. Standard browser video controls remain available. The last executed result is restored from node properties; temporary videos may expire after restarting ComfyUI.
 
-After changing the node files, refresh ComfyUI with Ctrl+F5. If installing the node for the first time, restart ComfyUI too. The viewer uses the libraries bundled with ComfyUI and no external services or models. The + Save version additionally requires VideoHelperSuite and its encoding dependencies.
+After updating the node files, restart ComfyUI and refresh the browser with Ctrl+F5. The viewer uses the libraries bundled with ComfyUI and no external services or models. The + Save version additionally requires VideoHelperSuite and its encoding dependencies.
 
 Both PromptSync versions show the video audio waveform below the timeline. Click or drag the waveform to seek; its playhead follows the video and prompt. The waveform resizes with the node. Silent audio and videos without an audio track are labelled separately. Audio is decoded locally without changing the video or sending it to external services.

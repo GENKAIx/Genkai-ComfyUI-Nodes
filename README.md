@@ -57,7 +57,7 @@ The waveform is decoded locally from the actual audio. A missing audio track and
 
 ## PromptSync + Save
 
-![PromptSync + Save node with video preview, timed prompt, and audio waveform](docs/images/promptsync-save.png)
+![PromptSync + Save with collapsible settings, timed prompt, waveform, and workflow timing](docs/images/promptsync-save.png)
 
 A separate output node that combines the PromptSync viewer with video saving through **VHS Video Combine**.
 
@@ -65,26 +65,40 @@ Includes the same [four reading styles](#reading-styles), auto-scroll, and audio
 
 Connect `prompt` and one source: `images`, `video`, or `filenames`. For latents on `images`, also connect `vae`. The `audio` input adds sound to image frames or overrides the source video's audio.
 
-Each completed save keeps **one final MP4**. Metadata is embedded in the video: no separate metadata PNG or silent intermediate remains alongside the result. If neither the source nor the `audio` input provides sound, the result has no audio track.
+Each completed save keeps **one final MP4**. Metadata is embedded when `save_metadata` is enabled (the default): no separate metadata PNG or silent intermediate remains alongside the result. If neither the source nor the `audio` input provides sound, the result has no audio track.
 
 The `Filenames` output is compatible with `VHS_FILENAMES` and contains only the final video's path. Previously saved results are not deleted.
 
+### Playback and workflow statistics
+
+- **Collapsible Save settings:** expand to adjust encoding and playback options, then hide them to give the viewer more room. The open/closed state is saved with the workflow.
+- **Autoplay and repeat:** a newly received video starts automatically. **Repeat preview → Loop** is the default and repeats until you pause it; choose **Once** for a single playback. This does not add repetitions to the saved file.
+- **Remembered volume:** starts at **25%**. Your selected level persists between generations and is saved with the workflow.
+- **Sound only on hover:** the default **Hover** mode enables sound over the video preview. Choose **Always** to keep sound on away from the preview. This setting affects playback only. Browsers may require an initial interaction before allowing audible autoplay.
+- **Labeled details below the waveform:** playback position and duration, video resolution, complete workflow execution time, and execution time per second of video, in a larger, left-aligned font.
+
+The built-in timer measures from ComfyUI's execution start to workflow completion, including saving, excluding queue waiting time. **Time per video second = workflow execution time ÷ video duration.** It measures the current run, so cached work can make the result faster; it does not isolate the model's generation time. Keep the interface connected during the run to capture the timing. Results are retained when you save the workflow; older previews without a recorded measurement show a dash. No separate timer node or extra timer package is required.
+
 ### Save settings
+
+Open **Save settings** above the viewer to reveal these controls:
 
 | Setting | Purpose |
 | --- | --- |
 | `frame_rate` | Output FPS. Match an existing video's original FPS to preserve its speed and prompt timing. |
-| `loop_count` | Repetition count, following VHS behavior. Default: `0`. |
+| `loop_count` | Additional repetitions in the saved file. `0`: no extra repeat; `1`: play the sequence twice. |
 | `filename_prefix` | Filename and subfolder relative to `output` or `temp`. Date tokens such as `GENKAI/%date:yyyy-MM-dd%/%date:hhmmss%` work when queued from the ComfyUI interface. |
 | `format` | MP4 with H.264 or H.265. H.264 is preferred for browser playback compatibility. |
 | `pix_fmt` | `yuv420p` or `yuv420p10le`; supported combinations depend on the codec and FFmpeg build. |
 | `crf` | Compression level. Lower values mean higher quality and larger files. Default: `19`. |
-| `save_metadata` | Always enabled. Embeds the available workflow, generation parameters, and original timed prompt. |
+| `save_metadata` | Enabled by default; can be switched off. Embeds the available workflow, generation parameters, and original timed prompt when enabled. |
 | `trim_to_audio` | Trims the video to audio using VHS. |
-| `pingpong` | Plays the frame sequence forward and backward. |
+| `pingpong` | Adds reversed frames after the forward sequence in the saved video (boomerang). Audio is not reversed. |
 | `save_output` | `true`: save in `output`; `false`: save in `temp`. |
+| **Sound only on hover** | Preview sound: **Hover** (default) or **Always**. |
+| **Repeat preview** | Preview playback: **Loop** (default) or **Once**. |
 
-The original timed prompt is stored as `genkai_timed_prompt` metadata. Existing videos are decoded and encoded again when saved. Looping and `pingpong` change the duration without automatically rewriting the prompt's timestamps.
+When metadata saving is enabled, the original timed prompt is stored as `genkai_timed_prompt` metadata. Existing videos are decoded and encoded again when saved. Looping and `pingpong` change the duration without automatically rewriting the prompt's timestamps.
 
 ### VHS Batch Manager
 

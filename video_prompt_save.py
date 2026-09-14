@@ -27,7 +27,7 @@ class GenkaiVideoPromptViewerSave:
                 "format": (list(FORMATS), {"default": FORMATS[0]}),
                 "pix_fmt": (["yuv420p", "yuv420p10le"], {"default": "yuv420p"}),
                 "crf": ("INT", {"default": 19, "min": 0, "max": 51, "tooltip": "Lower values mean higher quality and larger files."}),
-                "save_metadata": ("BOOLEAN", {"default": True, "tooltip": "Always enabled: embeds the workflow, generation parameters and timed prompt in the final video."}),
+                "save_metadata": ("BOOLEAN", {"default": True, "tooltip": "Embed the workflow, generation parameters and timed prompt in the saved video."}),
                 "trim_to_audio": ("BOOLEAN", {"default": False}),
                 "pingpong": ("BOOLEAN", {"default": False}),
                 "save_output": ("BOOLEAN", {"default": True}),
@@ -88,7 +88,7 @@ class GenkaiVideoPromptViewerSave:
             filename_prefix=filename_prefix, format=format, pingpong=pingpong,
             save_output=save_output, audio=audio, meta_batch=meta_batch, vae=vae,
             prompt=workflow_prompt, extra_pnginfo=metadata, unique_id=unique_id,
-            pix_fmt=pix_fmt, crf=crf, save_metadata=True, trim_to_audio=trim_to_audio,
+            pix_fmt=pix_fmt, crf=crf, save_metadata=save_metadata, trim_to_audio=trim_to_audio,
         )
         output = result["result"] if isinstance(result, dict) else result
         ui = {}

@@ -3,6 +3,10 @@ import {api} from "../../scripts/api.js";
 import {createViewer} from "./viewer.js";
 import {applyTextReplacements} from "../../scripts/utils.js";
 import {settingSchema, normalizeSettings} from "./settings.js";
+import {createSaveControls} from "./save_controls.js";
+import {createExecutionTiming} from "./execution_timing.js";
+
+const executionTiming = createExecutionTiming(api);
 
 const names = {
     GenkaiVideoPromptViewer: "PromptSync (genkai)",
@@ -10,15 +14,6 @@ const names = {
     GENKAI_FolderSearch: "Folder Search (genkai)",
     ImageExpandWithFill: "Image Expand With Fill (genkai)",
 };
-
-function enableSavedMetadata(node) {
-    const widget = node.widgets?.find(w => w.name === "save_metadata");
-    if (!widget) return;
-    widget.value = true;
-    widget.disabled = true;
-    widget.callback = () => { widget.value = true; };
-    widget.serializeValue = () => true;
-}
 
 app.registerExtension({
     name: "GENKAI.VideoPromptViewer",
@@ -30,7 +25,6 @@ app.registerExtension({
             const title = this.title || names[nodeData.name];
             this.title = title.replace(/^GENKAI\s*[·:—-]\s*/i, "").replace(/\s*\(genkai\)\s*$/i, "").trim() + " (genkai)";
             if (nodeData.name === "GenkaiVideoPromptViewer" || nodeData.name === "GenkaiVideoPromptViewerSave") this.title = names[nodeData.name];
-            if (nodeData.name === "GenkaiVideoPromptViewerSave") enableSavedMetadata(this);
             return result;
         };
         if (nodeData.name !== "GenkaiVideoPromptViewer" && nodeData.name !== "GenkaiVideoPromptViewerSave") return;
@@ -65,16 +59,17 @@ app.registerExtension({
             const result = created?.apply(this, arguments);
             this.properties ||= {};
             if (nodeData.name === "GenkaiVideoPromptViewerSave") {
-                enableSavedMetadata(this);
                 const prefix = this.widgets.find(w => w.name === "filename_prefix");
                 prefix.serializeValue = () => applyTextReplacements(app, prefix.value);
+                this.genkaiSaveControls = createSaveControls(this, schema);
             }
             this.genkaiViewer = createViewer({
                 enablePromptStyles: true,
+                enablePlaybackSettings: nodeData.name === "GenkaiVideoPromptViewerSave",
                 resolveVideo: descriptor => api.apiURL(`/view?${new URLSearchParams({...descriptor})}`),
                 resolveWaveform: descriptor => api.apiURL(`/genkai/audio-waveform?${new URLSearchParams({...descriptor})}`),
                 preferences: this.properties.genkaiPreferences,
-                onPreferences: value => { this.properties.genkaiPreferences = value; },
+                onPreferences: value => { this.properties.genkaiPreferences = value; this.graph?.change(); },
             });
             const previewWidget = this.addDOMWidget("genkai_timeline", "GENKAI_VIDEO_READER", this.genkaiViewer.element, {
                 serialize: false, hideOnZoom: false,
@@ -90,21 +85,33 @@ app.registerExtension({
             const result = executed?.apply(this, arguments);
             const data = message?.genkai_preview?.[0];
             if (data) {
+                this.genkaiStopTiming?.();
                 this.properties.genkaiPreview = data;
                 this.genkaiViewer?.setData(data);
+                if (nodeData.name === "GenkaiVideoPromptViewerSave") {
+                    this.genkaiStopTiming = executionTiming.watch(timing => {
+                        if (this.properties.genkaiPreview !== data) return;
+                        data.execution = timing;
+                        this.genkaiViewer?.setExecution(timing);
+                        this.setDirtyCanvas(true, true);
+                    });
+                }
                 this.setDirtyCanvas(true, true);
             }
             return result;
         };
         const configured = nodeType.prototype.onConfigure;
         nodeType.prototype.onConfigure = function () {
+            this.genkaiStopTiming?.();
             const result = configured?.apply(this, arguments);
             this.genkaiViewer?.setPreferences(this.properties?.genkaiPreferences);
+            this.genkaiSaveControls?.apply();
             if (this.properties?.genkaiPreview) this.genkaiViewer?.setData(this.properties.genkaiPreview);
             return result;
         };
         const removed = nodeType.prototype.onRemoved;
         nodeType.prototype.onRemoved = function () {
+            this.genkaiStopTiming?.();
             this.genkaiViewer?.dispose();
             return removed?.apply(this, arguments);
         };
