@@ -1,8 +1,8 @@
-export function createWaveform({resolveWaveform, jump}) {
+export function createWaveform({resolveWaveform, jump, title = "AUDIO", ariaLabel = "Audio waveform position"}) {
     const element = document.createElement("div"); element.className = "gk-waveform";
-    const label = document.createElement("div"); label.className = "gk-waveform-label"; label.textContent = "AUDIO";
+    const label = document.createElement("div"); label.className = "gk-waveform-label"; label.textContent = title;
     const lane = document.createElement("div"); lane.className = "gk-waveform-lane"; lane.tabIndex = 0;
-    lane.setAttribute("role", "slider"); lane.setAttribute("aria-label", "Audio waveform position"); lane.setAttribute("aria-valuemin", "0");
+    lane.setAttribute("role", "slider"); lane.setAttribute("aria-label", ariaLabel); lane.setAttribute("aria-valuemin", "0");
     const canvas = document.createElement("canvas"); canvas.setAttribute("aria-hidden", "true");
     const playhead = document.createElement("div"); playhead.className = "gk-waveform-playhead";
     const status = document.createElement("span"); status.className = "gk-waveform-status";

@@ -116,6 +116,44 @@ The `meta_batch` input supports processing image/latent batches in parts. Set `l
 
 </details>
 
+## Video Compare Loader + PromptSync Video Compare
+
+https://github.com/user-attachments/assets/1c1792dc-1597-48b5-816c-4c7cc20ec643
+
+<details>
+<summary>Description, features and settings</summary>
+
+Compare two videos generated from the same prompt: different seeds, models, settings, or an original and an upscaled version. **Video Compare Loader** sends both videos and an optional shared prompt to **PromptSync Video Compare** through one connection.
+
+### Two comparison modes
+
+- **Stacked A / B:** the videos play one above the other.
+- **Wipe A / B:** the videos overlap, with a vertical divider you can drag left and right to compare the same area in each version.
+
+Both modes use synchronized playback, pause, seeking and optional looping. Switching modes keeps the current playback position. If the videos have different lengths, the shorter one holds its last frame until the longer one ends. Videos retain their aspect ratios.
+
+### Loader and shared prompt
+
+- Load or drag a video into each of the two slots and give the variants readable names.
+- Enter the common timed prompt in **PROMPT · OPTIONAL**, below the videos. The field grows up to **12 lines**, then scrolls internally.
+- Click **+ Add PromptSync Video Compare** to create and connect the comparison node automatically.
+- Run the workflow and press **Play**. The comparison node has a single **videos** input carrying both videos and the prompt.
+- A nonempty prompt appears on the right, with the current timed scene highlighted and optional auto-scroll. Leave the prompt empty to give the videos the full panel width.
+
+### Timeline, audio and appearance
+
+- A PromptSync-style slider and time markers let you seek both videos together. Markers sit at their corresponding times, with the active scene highlighted.
+- Separate **AUDIO A** and **AUDIO B** waveforms share the same time scale. Click or drag either waveform to seek; both playheads follow playback. Waveforms remain visible when sound is muted.
+- Enable each video's sound independently and adjust its volume under **Audio tracks**. Both start muted, with volume set to **25%**. A missing audio track is labeled.
+- Choose **Obsidian** or **Gold**, and resize the node to make room for the videos and prompt. Playback loops by default; turn off **Loop** for a single pass.
+- Names, prompt, comparison mode, divider position, theme and audio settings are saved with the workflow.
+
+Both nodes are in **GENKAI/Video**. Use browser-compatible files, such as MP4 with H.264 video and AAC audio. Uploaded files remain local to your ComfyUI installation and must be available when reopening the workflow.
+
+[Example workflow](examples/Video%20Compare.json) · [More details](README_VideoCompare.md) · [Supported timing syntax](#supported-timing-syntax)
+
+</details>
+
 ## H3 Media Loader + H3 Reference Splitter
 
 ![H3 Media Loader and H3 Reference Splitter with images, video and audio in the Obsidian style](docs/images/h3-media-loader.png)
