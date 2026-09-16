@@ -80,3 +80,28 @@
 .gk-video-reader[data-prompt-style="script"] .gk-prose > .gk-global { color:#cdc2ac; background:#29271f; border-left-color:#958258; font:14px/1.75 'Segoe UI',system-ui,sans-serif; }
 .gk-video-reader[data-prompt-style="script"] .gk-timed-key { color:#8dd9f1; }
 .gk-video-reader[data-prompt-style="script"] .gk-global-key { color:#cdc2ac; }
+
+/* Obsidian: graphite surfaces and platinum scene highlighting. */
+.gk-video-reader[data-prompt-style="obsidian"] {
+  --gold:#b8c5da; --line:#3b4452; --global:#a3bfd1;
+  background:linear-gradient(155deg,#181b22,#101217 50%,#0d0f13);
+  color:#d8dee8; border-color:#424a58; border-radius:12px;
+  box-shadow:inset 0 1px 0 #ffffff0d;
+}
+.gk-video-reader[data-prompt-style="obsidian"] :is(.gk-label,.gk-auto,.gk-style-label) { color:#bcc6d6; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-prompt-header { background:#1a1f28; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-style-select { background:#222731; color:#e0e7f1; border-color:#424a58; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-style-select:hover { background:#303743; border-color:#aeb9c9; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-prompt { background:#101319; scrollbar-color:#4d596c transparent; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-prose { font:15px/1.85 'Segoe UI',system-ui,sans-serif; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-prose > .gk-fragment { padding-left:76px; border-bottom:1px solid #282f3a; color:#b9c3d2; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-fragment::before { content:attr(data-time); position:absolute; top:25px; left:15px; color:#8898af; font:11px/1.4 ui-monospace,monospace; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-prose > .gk-fragment.is-active { background:#293342; border-left-color:#b8c5da; color:#f0f4fc; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-fragment.is-active::before { color:#e0e9fa; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-prose > .gk-global { background:#17232e; color:#abc9dc; border-left-color:#547388; }
+.gk-video-reader[data-prompt-style="obsidian"] :is(.gk-clock,.gk-dimensions,.gk-execution-time,.gk-seconds-cost,.gk-status,.gk-warning) { color:#aebace; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-track { background:#3d4655; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-time-button { background:#1c222c; color:#b9c5d7; border-color:#465164; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-time-button:is(:hover,.is-active) { background:#303d50; color:#f0f4fc; border-color:#b8c5da; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-waveform-lane { background:#121f2d; box-shadow:inset 0 0 0 1px #354d66; }
+.gk-video-reader[data-prompt-style="obsidian"] .gk-waveform-label { color:#aac4de; }

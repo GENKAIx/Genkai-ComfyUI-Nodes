@@ -1,0 +1,177 @@
+{
+  "last_node_id": 2,
+  "last_link_id": 1,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "GenkaiMediaBank",
+      "pos": [
+        40,
+        100
+      ],
+      "size": [
+        1000,
+        850
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "references",
+          "type": "H3_REFS",
+          "links": [
+            1
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenkaiMediaBank"
+      },
+      "widgets_values": [
+        "[]"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "GenkaiReferenceSplitter",
+      "pos": [
+        1120,
+        100
+      ],
+      "size": [
+        260,
+        400
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "references",
+          "type": "H3_REFS",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "picture_1",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "picture_2",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "picture_3",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "picture_4",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "picture_5",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "picture_6",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "picture_7",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "picture_8",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "picture_9",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "video_1",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "video_2",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "video_3",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "video_audio_1",
+          "type": "AUDIO",
+          "links": null
+        },
+        {
+          "name": "video_audio_2",
+          "type": "AUDIO",
+          "links": null
+        },
+        {
+          "name": "video_audio_3",
+          "type": "AUDIO",
+          "links": null
+        },
+        {
+          "name": "audio_1",
+          "type": "AUDIO",
+          "links": null
+        },
+        {
+          "name": "audio_2",
+          "type": "AUDIO",
+          "links": null
+        },
+        {
+          "name": "audio_3",
+          "type": "AUDIO",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenkaiReferenceSplitter"
+      },
+      "widgets_values": []
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "H3_REFS"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.82,
+      "offset": [
+        50,
+        10
+      ]
+    }
+  },
+  "version": 0.4
+}

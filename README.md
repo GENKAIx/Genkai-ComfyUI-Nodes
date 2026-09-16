@@ -61,7 +61,7 @@ The waveform is decoded locally from the actual audio. A missing audio track and
 
 A separate output node that combines the PromptSync viewer with video saving through **VHS Video Combine**.
 
-Includes the same [four reading styles](#reading-styles), auto-scroll, and audio waveform. [See supported timing syntax and examples](#supported-timing-syntax).
+Includes the same [four reading styles](#reading-styles), auto-scroll, and audio waveform, plus **Obsidian**: a near-black theme with graphite controls, cool scene highlights and a sans-serif font. [See supported timing syntax and examples](#supported-timing-syntax).
 
 Connect `prompt` and one source: `images`, `video`, or `filenames`. For latents on `images`, also connect `vae`. The `audio` input adds sound to image frames or overrides the source video's audio.
 
@@ -106,6 +106,27 @@ The `meta_batch` input supports processing image/latent batches in parts. Set `l
 
 **Automatic requeue requires support in VHS.** In VHS versions where `requeue_workflow` in `videohelpersuite/utils.py` only counts `VHS_VideoCombine` output nodes, add `GenkaiVideoPromptViewerSave` to that list. This package does not patch VHS automatically. Ordinary saves without `meta_batch` do not need this change. Check compatibility again after updating VHS.
 
+## H3 Media Loader + H3 Reference Splitter
+
+![H3 Media Loader and H3 Reference Splitter with images, video and audio in the Obsidian style](docs/images/h3-media-loader.png)
+
+Keep your image, video and audio references together in one panel. Connect **H3 Media Loader** to **H3 Reference Splitter** with a single link to use the media as separate outputs in your workflow.
+
+- **Nine image slots, three video slots and three standalone audio slots**, with previews and individual enable switches.
+- Load files through the file picker or drag-and-drop. Hover over a slot and press **Ctrl+V** to paste an image.
+- Drag references between slots: an occupied slot swaps with the source; an empty slot receives the reference and leaves its previous position empty. Moving media does not change its data type.
+- Crop, rotate or mirror pictures; trim video/audio, capture frames and extract audio. Video sound can be off, paired with the video or used separately.
+- Save named media presets and restore reference sets later.
+- Choose **Original**, **Gold** (default), **Obsidian**, **Light Studio** or **High Contrast**. Large image switches and aligned action buttons make the slots easier to use.
+- Drag the divider to give either column more space. **Resize contents with node** is enabled by default in **Size**, so the panel follows the node's size.
+- Click **+ Native-output splitter** to add and connect the second node automatically.
+
+The loader outputs an `H3_REFS` bundle. The splitter provides `picture_1`–`picture_9` and `video_1`–`video_3` as `IMAGE` data, plus `video_audio_1`–`video_audio_3` and `audio_1`–`audio_3` as `AUDIO`. Disabled references are skipped; references of each type follow the visual slot order. The original H3 reference/audio limits still apply.
+
+Based on the MIT-licensed media nodes by [Adudeguyman](https://github.com/Adudeguyman/ComfyUI-Fantastic-MiniMaxH3-PromptBuilder), with GENKAI interface additions. All required loader and splitter code is included in this pack; the original pack does not need to be installed.
+
+[Example workflow](examples/Media%20Bank%20and%20Reference%20Splitter.json) · [More details](README_MediaBank.md)
+
 ## Folder Search
 
 ![Folder Search node and its file scanning settings](docs/images/folder-search.png)
@@ -136,6 +157,24 @@ Expand the canvas by adding pixels on the `left`, `right`, `top`, and `bottom`. 
 
 The original image area is not resized. This node does not perform generative outpainting or invent new details. Expansion converts through an 8-bit image; with all padding values set to zero, the input is returned without this conversion.
 
+## Seed Slots
+
+https://github.com/user-attachments/assets/5607fd79-25a7-4cc7-8aac-1713e3511ed5
+
+A slot-machine seed generator made to **add a little fun to ComfyUI**. Spin the reels, collect combinations and use the resulting seed in your generation.
+
+- Outputs an `INT` seed from **0 to 9,999,999,999**. Connect it to the sampler's seed input.
+- Each workflow execution draws a new seed while **Lock seed** is off. Turn the lock on to reuse the displayed number.
+- **SPIN** and the lever let you try a draw without running the workflow. Lock a number you like before generating; otherwise the next execution draws again.
+- Combinations earn points, with a score for the current draw and a running total. Open **COMBINATIONS & POINTS** to see the scoring rules.
+- Animated perimeter lights celebrate combinations; new draws scoring **more than 50** also launch confetti. Optional sound is off by default.
+- Expand **RECENT SEEDS** to see the last 50 results, their date/time and score. Click one to restore and lock it, or enter a seed manually.
+- Seed, lock state, history and total score are stored with the workflow. The animation does not delay generation.
+
+The score is just for fun and does not affect image or video quality.
+
+[Example workflow](examples/Seed%20Slots%20Example.json) · [Controls and scoring details](README_SeedSlots.md)
+
 ## Installation
 
 Run this inside `ComfyUI/custom_nodes`:
@@ -144,7 +183,7 @@ Run this inside `ComfyUI/custom_nodes`:
 git clone https://github.com/GENKAIx/Genkai-ComfyUI-Nodes.git
 ```
 
-Restart ComfyUI and refresh your browser with **Ctrl+F5**. Search for the nodes by name. Viewers are in `GENKAI/Video`; the other nodes are in `GENKAI nodes`.
+Restart ComfyUI and refresh your browser with **Ctrl+F5**. Search for the nodes by name. Viewers are in `GENKAI/Video`, H3 media nodes in `GENKAI/Media`, Seed Slots in `GENKAI/Seeds`, and Folder Search / Image Expand With Fill in `GENKAI nodes`.
 
 Use a current ComfyUI installation with `VIDEO` and `comfy_api.latest` support. The pack uses PyTorch, NumPy, PyAV, and aiohttp from the ComfyUI environment.
 
@@ -203,5 +242,7 @@ More details: [PromptSync technical notes](README_VideoPromptViewer.md).
 
 - [ComfyUI](https://github.com/Comfy-Org/ComfyUI): runtime, graph, and data types.
 - [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite): video encoding for PromptSync + Save.
+
+- [ComfyUI-Fantastic-MiniMaxH3-PromptBuilder](https://github.com/Adudeguyman/ComfyUI-Fantastic-MiniMaxH3-PromptBuilder) by Adudeguyman: the bundled H3 media loader and splitter; [MIT license](h3_media/LICENSE).
 
 Pack author: **GENKAI** · [GitHub](https://github.com/GENKAIx)

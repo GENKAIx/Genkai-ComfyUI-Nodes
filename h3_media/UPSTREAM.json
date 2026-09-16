@@ -1,0 +1,27 @@
+{
+  "source": "https://github.com/Adudeguyman/ComfyUI-Fantastic-MiniMaxH3-PromptBuilder",
+  "version": "1.7.1",
+  "original_sha256": {
+    "nodes.py": "6c634fb4e784e9411290bfb4652815efe1c32237d72ce9f55a12240fa38896d5",
+    "media_io.py": "f24e8a65d3322a9540eb03d539625df9da6b7d7113c40a1a00016beed3493d71",
+    "web_api.py": "4783f11940d17d3d4fd47d905ea36ec5018a9d8c8aadb3f575f441a1f4ef6bad",
+    "web/medialoader.js": "028d6192eb40b2ede440c2337678c86ec2462ca644b18afaa9aff13aae45688d",
+    "LICENSE": "77d5f54782226f2a5c4d3ee5c391c340b5ba4894bb3e3d340c23149b8fd499f4"
+  },
+  "frontend_replacements": {
+    "\"MiniMaxH3MediaLoader\"": "\"GenkaiMediaBank\"",
+    "\"MiniMaxH3ReferenceSplitter\"": "\"GenkaiReferenceSplitter\"",
+    "\"MiniMaxH3.MediaLoader\"": "\"GENKAI.H3MediaLoader\"",
+    "/minimax_h3/": "/genkai/h3_media/",
+    "X-MiniMaxH3-Token": "X-Genkai-H3-Token",
+    "mmh3.loaderScale": "genkai.h3.loaderScale",
+    "mml-": "gkh3mml-",
+    "Fantastic H3 Media Loader": "H3 Media Loader (genkai)"
+  },
+  "genkai_frontend_additions": [
+    "Persistent visual slots with cross-media move/swap",
+    "Hovered-slot clipboard image paste and targeted uploads",
+    "Five panel themes and adjustable column divider",
+    "Responsive node resizing enabled by default; Size menu focus fix; larger aligned picture controls"
+  ]
+}

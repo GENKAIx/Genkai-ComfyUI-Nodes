@@ -74,6 +74,7 @@ export function createViewer({resolveVideo, resolveWaveform, preferences = {}, o
     heading.append(element("span", "gk-label", "PROMPT"), autoLabel);
     const styles = [
         ["spotlight", "Spotlight · Serif"],
+        ...(enablePlaybackSettings ? [["obsidian", "Obsidian"]] : []),
         ["cards", "Cards · Sans"],
         ["script", "Script · Mono"],
         ["classic", "Classic · Inline"],
