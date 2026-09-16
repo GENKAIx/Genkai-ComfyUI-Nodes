@@ -1,0 +1,111 @@
+{
+  "last_node_id": 2,
+  "last_link_id": 1,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "GenkaiPromptBank",
+      "pos": [
+        60,
+        140
+      ],
+      "size": [
+        480,
+        580
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "PROMPTS",
+          "type": "GENKAI_PROMPTS",
+          "links": [
+            1
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenkaiPromptBank"
+      },
+      "widgets_values": [
+        "[{\"id\": \"character\", \"text\": \"A lone traveler in a misty forest\"}, {\"id\": \"camera\", \"text\": \"Slow cinematic camera orbit\"}, {\"id\": \"style\", \"text\": \"Soft golden light, film grain\"}]"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "GenkaiPromptMerge",
+      "pos": [
+        680,
+        140
+      ],
+      "size": [
+        480,
+        550
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "rows_json",
+          "type": "STRING",
+          "link": null,
+          "widget": {
+            "name": "rows_json"
+          }
+        },
+        {
+          "name": "separator",
+          "type": "STRING",
+          "link": null,
+          "widget": {
+            "name": "separator"
+          }
+        },
+        {
+          "name": "prompts",
+          "type": "GENKAI_PROMPTS",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenkaiPromptMerge"
+      },
+      "widgets_values": [
+        "{\"character\": {\"name\": \"Character\", \"enabled\": true}, \"camera\": {\"name\": \"Camera\", \"enabled\": false}, \"style\": {\"name\": \"Style\", \"enabled\": true}}",
+        ","
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      2,
+      "GENKAI_PROMPTS"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.9,
+      "offset": [
+        50,
+        30
+      ]
+    }
+  },
+  "version": 0.4
+}

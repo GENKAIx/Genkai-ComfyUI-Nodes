@@ -1,0 +1,35 @@
+.gk-prompts { box-sizing: border-box; width: 100%; height: 100%; padding: 16px; color: #e5e5e7; background: #222326; border: 1px solid #44464c; border-radius: 9px; font: 14px/1.5 system-ui, sans-serif; overflow: auto; }
+.gk-prompts * { box-sizing: border-box; }
+.gk-prompt-content, .gk-prompt-rows { display: flex; flex-direction: column; gap: 12px; }
+.gk-prompts input, .gk-prompts textarea, .gk-prompts button { font: inherit; color: inherit; }
+.gk-prompts input, .gk-prompts textarea { background: #191b1e; border: 1px solid #4b4c52; border-radius: 6px; outline: none; }
+.gk-prompts input:focus, .gk-prompts textarea:focus { border-color: #d6b263; box-shadow: 0 0 0 1px #d6b26340; }
+.gk-prompts textarea { padding: 9px 11px; width: 100%; resize: none; overflow: hidden; display: block; line-height: 21px; overflow-wrap: anywhere; }
+.gk-prompts button { cursor: pointer; border: 1px solid #52535a; border-radius: 6px; background: #303136; padding: 7px 10px; }
+.gk-prompts button:hover { border-color: #d6b263; }
+.gk-prompts button:disabled { opacity: .3; cursor: default; }
+.gk-bank-card { display: flex; flex-direction: column; gap: 7px; }
+.gk-bank-text { min-height: 83px; }
+.gk-prompt-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: #b8bac3; font-size: 12px; letter-spacing: 1px; }
+.gk-prompt-heading .gk-remove-prompt { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; font: 20px/1 system-ui, sans-serif; }
+.gk-add-prompt { min-height: 39px; color: #f1cc75 !important; border-color: #89703d !important; background: #b78d2820 !important; }
+.gk-add-merge { min-height: 39px; }
+.gk-merge-card { border: 1px solid #375345; border-radius: 7px; padding: 9px; background: #263e30; display: flex; flex-direction: column; gap: 7px; }
+.gk-merge-card[data-enabled="false"] { border-color: #484a50; background: #26282c; }
+.gk-merge-heading { display: flex; gap: 10px; align-items: flex-start; }
+.gk-prompts .gk-row-name { min-width: 0; flex: 1; width: 0; padding: 5px 8px; min-height: 33px; background: #101b1480; }
+.gk-merge-card[data-enabled="false"] .gk-row-name { background: #191b1e; }
+.gk-row-toggle { display: flex; align-items: center; gap: 7px; flex: 0 0 auto; padding-top: 6px; }
+.gk-prompts .gk-switch { width: 38px; height: 21px; border: 0; border-radius: 12px; padding: 0; background: #51545b; position: relative; }
+.gk-switch::after { content: ""; position: absolute; height: 17px; width: 17px; border-radius: 50%; background: #b3b6be; top: 2px; left: 2px; transition: transform .15s, background .15s; }
+.gk-prompts .gk-switch[aria-checked="true"] { background: #44845a; }
+.gk-switch[aria-checked="true"]::after { transform: translateX(17px); background: #def1df; }
+.gk-switch:focus-visible { outline: 2px solid #edc362; outline-offset: 3px; }
+.gk-toggle-label { font-size: 11px; color: #b8c8bb; min-width: 22px; }
+.gk-separator { display: flex; gap: 12px; align-items: flex-start; padding-top: 13px; border-top: 1px solid #44464c; }
+.gk-separator > span { padding-top: 6px; }
+.gk-separator textarea { flex: 1; width: 0; min-width: 0; min-height: 35px; padding: 6px 9px; }
+.gk-output-label { color: #b3b5be; font-size: 12px; letter-spacing: 1px; }
+.gk-output-preview { min-height: 83px; }
+.gk-prompt-note { color: #9c9ea7; font-size: 12px; }
+@media (prefers-reduced-motion: reduce) { .gk-switch::after { transition: none; } }

@@ -142,6 +142,31 @@ Based on the MIT-licensed media nodes by [Adudeguyman](https://github.com/Adudeg
 
 </details>
 
+## Prompt Bank + Prompt Merge
+
+![Prompt Bank connected to Prompt Merge, with named switches and a combined text preview](docs/images/prompt-bank-merge.png)
+
+<details>
+<summary>Description, features and settings</summary>
+
+Build a prompt from reusable pieces: keep the subject, camera, lighting or style in separate fields, then choose which pieces to include without deleting or copying text.
+
+**Prompt Bank** stores your prompts in order. **+ Add Prompt** adds a field, **×** removes it, and fields start at three lines and grow with their contents. A single **PROMPTS** connection sends the whole collection to Prompt Merge, including prompts added later. **+ Add Prompt Merge** creates and connects the second node automatically.
+
+**Prompt Merge** lets you name each row and switch it on or off. Enabled rows are green; disabled rows are gray. Rows show only your labels and switches, keeping the panel compact. Labels do not become part of the output text.
+
+- The single **STRING** output joins enabled, nonblank prompts in their Bank order.
+- **Separator** accepts any text, a real line break or an empty value. The default is exactly `,`, with no extra space. Enter `, ` if you want a space after each comma.
+- **OUTPUT PREVIEW** updates while you edit, so you can check the complete prompt before using it.
+- Row names and switches stay attached to their prompts when other entries are removed. Text and settings are saved with the workflow.
+- Connect ordinary text inputs to Merge's **STRING** output; Bank's **PROMPTS** output carries the collection between these two nodes.
+
+No extra models or custom node packs are needed. Find both nodes under **GENKAI/Text**.
+
+[Example workflow](examples/Prompt%20Bank%20and%20Merge.json) · [More details](README_PromptTools.md)
+
+</details>
+
 ## Folder Search
 
 ![Folder Search node and its file scanning settings](docs/images/folder-search.png)
@@ -213,7 +238,7 @@ Run this inside `ComfyUI/custom_nodes`:
 git clone https://github.com/GENKAIx/Genkai-ComfyUI-Nodes.git
 ```
 
-Restart ComfyUI and refresh your browser with **Ctrl+F5**. Search for the nodes by name. Viewers are in `GENKAI/Video`, H3 media nodes in `GENKAI/Media`, Seed Slots in `GENKAI/Seeds`, and Folder Search / Image Expand With Fill in `GENKAI nodes`.
+Restart ComfyUI and refresh your browser with **Ctrl+F5**. Search for the nodes by name. Viewers are in `GENKAI/Video`, H3 media nodes in `GENKAI/Media`, Prompt Bank / Prompt Merge in `GENKAI/Text`, Seed Slots in `GENKAI/Seeds`, and Folder Search / Image Expand With Fill in `GENKAI nodes`.
 
 Use a current ComfyUI installation with `VIDEO` and `comfy_api.latest` support. The pack uses PyTorch, NumPy, PyAV, and aiohttp from the ComfyUI environment.
 
