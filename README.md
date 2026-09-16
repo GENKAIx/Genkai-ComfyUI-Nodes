@@ -16,6 +16,9 @@
 
 https://github.com/user-attachments/assets/b0ac1e71-b139-49ce-98a5-c3e015adcd86
 
+<details>
+<summary>Description, features and settings</summary>
+
 Watch a generated video alongside its original timed prompt. Check whether actions, camera cuts, and dialogue happen at the intended moments.
 
 - **Left:** video player, clickable timeline markers, and an audio waveform.
@@ -55,9 +58,14 @@ Connect text to `prompt` and **one** video source:
 
 The waveform is decoded locally from the actual audio. A missing audio track and a silent track are labeled separately. Temporary previews may become unavailable after the `temp` directory is cleared.
 
+</details>
+
 ## PromptSync + Save
 
 ![PromptSync + Save with collapsible settings, timed prompt, waveform, and workflow timing](docs/images/promptsync-save.png)
+
+<details>
+<summary>Description, features and settings</summary>
 
 A separate output node that combines the PromptSync viewer with video saving through **VHS Video Combine**.
 
@@ -106,9 +114,14 @@ The `meta_batch` input supports processing image/latent batches in parts. Set `l
 
 **Automatic requeue requires support in VHS.** In VHS versions where `requeue_workflow` in `videohelpersuite/utils.py` only counts `VHS_VideoCombine` output nodes, add `GenkaiVideoPromptViewerSave` to that list. This package does not patch VHS automatically. Ordinary saves without `meta_batch` do not need this change. Check compatibility again after updating VHS.
 
+</details>
+
 ## H3 Media Loader + H3 Reference Splitter
 
 ![H3 Media Loader and H3 Reference Splitter with images, video and audio in the Obsidian style](docs/images/h3-media-loader.png)
+
+<details>
+<summary>Description, features and settings</summary>
 
 Keep your image, video and audio references together in one panel. Connect **H3 Media Loader** to **H3 Reference Splitter** with a single link to use the media as separate outputs in your workflow.
 
@@ -127,9 +140,14 @@ Based on the MIT-licensed media nodes by [Adudeguyman](https://github.com/Adudeg
 
 [Example workflow](examples/Media%20Bank%20and%20Reference%20Splitter.json) · [More details](README_MediaBank.md)
 
+</details>
+
 ## Folder Search
 
 ![Folder Search node and its file scanning settings](docs/images/folder-search.png)
+
+<details>
+<summary>Description, features and settings</summary>
 
 Find files in a directory and pass the results to the next node. Useful for processing a collection of images, videos, or other files one at a time.
 
@@ -145,9 +163,14 @@ Find files in a directory and pass the results to the next node. Useful for proc
 
 The `output` contains a list or a string, depending on the mode. Without `infinite_loop`, the node returns an empty string after the last result; the next execution starts a new pass. It advances when executed, but does not queue ComfyUI runs by itself. Results follow filesystem traversal order without additional sorting.
 
+</details>
+
 ## Image Expand With Fill
 
 ![Image Expand With Fill node with padding and fill settings](docs/images/image-expand-with-fill.png)
+
+<details>
+<summary>Description, features and settings</summary>
 
 Expand the canvas by adding pixels on the `left`, `right`, `top`, and `bottom`. Works with individual images and `IMAGE` batches.
 
@@ -157,9 +180,14 @@ Expand the canvas by adding pixels on the `left`, `right`, `top`, and `bottom`. 
 
 The original image area is not resized. This node does not perform generative outpainting or invent new details. Expansion converts through an 8-bit image; with all padding values set to zero, the input is returned without this conversion.
 
+</details>
+
 ## Seed Slots
 
 https://github.com/user-attachments/assets/5607fd79-25a7-4cc7-8aac-1713e3511ed5
+
+<details>
+<summary>Description, features and settings</summary>
 
 A slot-machine seed generator made to **add a little fun to ComfyUI**. Spin the reels, collect combinations and use the resulting seed in your generation.
 
@@ -174,6 +202,8 @@ A slot-machine seed generator made to **add a little fun to ComfyUI**. Spin the 
 The score is just for fun and does not affect image or video quality.
 
 [Example workflow](examples/Seed%20Slots%20Example.json) · [Controls and scoring details](README_SeedSlots.md)
+
+</details>
 
 ## Installation
 
