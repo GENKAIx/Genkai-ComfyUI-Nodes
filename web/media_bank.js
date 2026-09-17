@@ -13,6 +13,9 @@ import { app } from "../../scripts/app.js";
 import { api } from "../../scripts/api.js";
 import { arrangeSlots, exchangeSlots, preferredSlots } from "./media_slots.js";
 
+import {FOLDER_NAME, arrangeGallery, installFolderUI} from "./media_folder_ui.js";
+
+const slotOwners = new WeakMap();
 const SLOT_MIME = "application/x-genkai-reference";
 let hoveredSlot = null;
 const layoutSheet = document.createElement("link");
@@ -23,6 +26,10 @@ document.head.append(layoutSheet);
 function layoutPrefs(node) {
   node.properties ||= {};
   const p = node.properties.genkaiMediaLayout ||= {};
+  if ((node.comfyClass === FOLDER_NAME || node.type === FOLDER_NAME) && !node.properties.genkaiFolderUIVersion) {
+    p.style = "obsidian";
+    node.properties.genkaiFolderUIVersion = 2;
+  }
   p.style = ["original", "gold", "obsidian", "studio", "contrast"].includes(p.style) ? p.style : "gold";
   p.split = Number.isFinite(p.split) ? Math.max(.25, Math.min(.8, p.split)) : .5;
   p.dynamicResize = p.dynamicResize !== false;
@@ -1542,7 +1549,7 @@ class TrimModal {
     // Same limits a dropped file would hit, checked before doing any work.
     // Refusals stay in the modal — closing it hides the reason and loses the
     // trim you just set.
-    if (panel.count("picture") >= MAX.picture) {
+    if (!panel.isFolder && panel.count("picture") >= MAX.picture) {
       this.modalSay(`All ${MAX.picture} picture slots are in use \u2014 remove ` +
         "a picture before capturing a frame.", true);
       return;
@@ -1550,7 +1557,7 @@ class TrimModal {
     // Over the reference budget isn't a reason to lose the frame: there's a
     // slot for it, so capture it and leave it switched off. Off items don't
     // count toward the budget, so nothing is over-sent.
-    const overBudget = fileCount(panel.items) >= MAX.total;
+    const overBudget = fileCount(panel.items) >= MAX.total || (panel.isFolder && panel.items.filter(i=>isOn(i)&&i.kind==='picture').length>=MAX.picture);
 
     const v = this.media;
     const W = v.videoWidth, H = v.videoHeight;
@@ -2142,6 +2149,9 @@ class LoaderPanel {
    *  single-buffered — only its target moves. */
   constructor(node, opts = {}) {
     this.node = node;
+    node.properties ||= {};
+    this.isFolder = node.comfyClass === FOLDER_NAME || node.type === FOLDER_NAME;
+    this.page = 0;
     this.store = opts.store || null;
     this.storeLabel = opts.storeLabel || "";
     if (!this.store) (node._mmlPanels = node._mmlPanels || []).push(this);
@@ -2197,14 +2207,14 @@ class LoaderPanel {
     });
 
     this.render();
-    this.refreshPresets();
+    if (!this.isFolder) this.refreshPresets();
   }
 
   /** presetName survives every edit short of Unload, so it will happily
    *  claim "beach set" for media that stopped matching it an hour ago.
    *  Ask the server what the media actually is and mark it if it drifted. */
   async checkPresetMatch() {
-    if (this.store) return;              // draft sets aren't named presets
+    if (this.store || this.isFolder) return; // draft sets aren't named presets
     try {
       const res = await presetApi("/match", { items: this.items });
       const drifted = !!this.presetName && res.name !== this.presetName;
@@ -2255,6 +2265,9 @@ class LoaderPanel {
     if (!name) return;
     try {
       const res = await presetApi("/load", { name });
+      if(!this.isFolder && ((res.items||[]).length>15 || ['picture','video','audio'].some(kind=>(res.items||[]).filter(i=>i.kind===kind).length>MAX[kind]))) {
+        throw new Error('This gallery preset contains too many files for H3 Media Loader. Open it in Media Folder and drag the references you need.');
+      }
       this.items = res.items || [];
       this.presetName = res.name;
       this.presetDrifted = false;
@@ -2286,6 +2299,8 @@ class LoaderPanel {
 
   widget() { return this.node.widgets?.find((w) => w.name === "media_state"); }
 
+  arrange(items) { return this.isFolder ? arrangeGallery(items.map(i => ({...i, enabled: true}))) : arrangeSlots(items); }
+
   read() {
     return this.readOrNull() || [];
   }
@@ -2299,7 +2314,7 @@ class LoaderPanel {
   readOrNull() {
     if (this.store) {
       const v = this.store.read();
-      return Array.isArray(v) ? arrangeSlots(v.map(withUid)) : null;
+      return Array.isArray(v) ? this.arrange(v.map(withUid)) : null;
     }
     const w = this.widget();
     if (!w || typeof w.value !== "string") return null;
@@ -2309,7 +2324,7 @@ class LoaderPanel {
     if (!raw) return null;
     try {
       const v = JSON.parse(raw);
-      return Array.isArray(v) ? arrangeSlots(v.map(withUid)) : null;
+      return Array.isArray(v) ? this.arrange(v.map(withUid)) : null;
     } catch (e) {
       return null;
     }
@@ -2322,7 +2337,7 @@ class LoaderPanel {
     if (this._committing) { this._commitAgain = true; return; }
     this._committing = true;
     try {
-      this.items = arrangeSlots(this.items.map(withUid));
+      this.items = this.arrange(this.items.map(withUid));
       if (this.store) {
         // No fanout: this panel isn't in the node's registry, and the node's
         // own media must not move because a draft was edited.
@@ -2331,7 +2346,7 @@ class LoaderPanel {
         return;
       }
       clearTimeout(this._matchTimer);
-      this._matchTimer = setTimeout(() => this.checkPresetMatch(), 400);
+      if (!this.isFolder) this._matchTimer = setTimeout(() => this.checkPresetMatch(), 400);
       const w = this.widget();
       if (!w) {
         // Nothing to write through yet. Keep what's in memory and just draw.
@@ -2768,7 +2783,7 @@ class LoaderPanel {
 
   async add(files, targetSlot = null) {
     if (!files.length || this.busy) return;
-    arrangeSlots(this.items);
+    this.arrange(this.items);
     this.say("");
     const caps = await capabilities();
     for (const file of files) {
@@ -2779,11 +2794,11 @@ class LoaderPanel {
       if (!guess) { this.say(`${file.name}: unsupported file type.`, true); continue; }
       const replacing = Number.isInteger(targetSlot) ? this.items.find(i => i.genkai_slot === targetSlot) : null;
       const remaining = this.items.filter(i => i !== replacing);
-      if (remaining.filter(i => i.kind === guess).length >= MAX[guess]) {
+      if (!this.isFolder && remaining.filter(i => i.kind === guess).length >= MAX[guess]) {
         this.say(`All ${MAX[guess]} ${guess} slots are full — ${file.name} skipped.`, true);
         continue;
       }
-      if (guess === "audio" && audioCount(remaining) >= MAX.audio) {
+      if (!this.isFolder && guess === "audio" && audioCount(remaining) >= MAX.audio) {
         this.say(`H3 takes ${MAX.audio} audio clips in total, and split video ` +
           `soundtracks count too — ${file.name} skipped.`, true);
         continue;
@@ -2800,11 +2815,12 @@ class LoaderPanel {
         const budgetFull = audioCount(remaining) >= MAX.audio;
         const pairable = info.kind === "video" && info.has_audio;
         const slot = Number.isInteger(targetSlot) ? targetSlot
-          : preferredSlots(info.kind).find(pos => !this.items.some(i => i.genkai_slot === pos));
+          : this.isFolder ? this.items.reduce((max,i)=>Math.max(max,i.genkai_slot),-1)+1 : preferredSlots(info.kind).find(pos => !this.items.some(i => i.genkai_slot === pos));
         if (slot === undefined) throw new Error("All slots are full.");
         if (replacing) this.items = this.items.filter(i => i.uid !== replacing.uid);
         this.items.push({
           genkai_slot: slot,
+          enabled: true,
           kind: info.kind,
           file: info.file,
           name: info.original || info.name,
@@ -2828,6 +2844,7 @@ class LoaderPanel {
   }
 
   trimBtn(item) {
+    if (this.isFolder) return null;
     const still = item.kind === "picture";
     if (!still && !item.duration) return null;
     const active = (item.trim && (item.trim.start || item.trim.end))
@@ -2862,11 +2879,14 @@ class LoaderPanel {
 
   toggle(item) {
     const it = this.live(item);
+    if (this.isFolder) return;
     it.enabled = it.enabled === false;
+    this.say('');
     this.commit();
   }
 
   powerBtn(item) {
+    if (this.isFolder) return null;
     const on = isOn(item);
     if (item.kind === "picture") return el("button", {
       type: "button", class: "gkh3mml-power gkh3mml-switch" + (on ? " on" : ""),
@@ -2896,8 +2916,38 @@ class LoaderPanel {
     return (item.uid && this.items.find((i) => i.uid === item.uid)) || item;
   }
 
+  receiveReference(sourcePanel, uid, position) {
+    if(this.busy || sourcePanel.busy || !Number.isInteger(position) || position<0)return;
+    const item=sourcePanel.items.find(i=>i.uid===uid);if(!item)return;
+    if(sourcePanel===this){
+      if(this.isFolder){
+        const other=this.items.find(i=>i.genkai_slot===position);
+        if(other)other.genkai_slot=item.genkai_slot;
+        item.genkai_slot=position;this.commit();
+      }else if(exchangeSlots(this.items,uid,position))this.commit();
+      return;
+    }
+    if(!this.isFolder && position>=15)return;
+    const rest=this.items.filter(i=>i.genkai_slot!==position);
+    if(!this.isFolder && rest.filter(i=>i.kind===item.kind).length>=MAX[item.kind]){
+      this.say(`All ${MAX[item.kind]} ${item.kind} slots are full.`,true);this.render();return;
+    }
+    const copy=JSON.parse(JSON.stringify(item));copy.uid=crypto.randomUUID();copy.genkai_slot=position;
+    copy.enabled=true;
+    if(!this.isFolder){
+      if(copy.kind==='audio' && audioCount(rest)>=MAX.audio){this.say('Audio reference limit reached.',true);this.render();return;}
+      if(copy.kind==='video' && audioCount(rest)>=MAX.audio)copy.audio_mode='off';
+      if(fileCount([...rest,copy])>MAX.total){
+        if(copy.kind==='video')copy.audio_mode='off';
+        if(fileCount([...rest,copy])>MAX.total){this.say('Reference limit reached.',true);this.render();return;}
+      }
+    }
+    this.items=[...rest,copy];this.say(`Copied ${copy.name}. The source reference is unchanged.`);this.commit();
+  }
+
   bindSlot(element, position) {
     element.dataset.slot = String(position);
+    slotOwners.set(element,this);
     element.addEventListener("pointerenter", () => { hoveredSlot = { panel: this, slot: position }; });
     element.addEventListener("pointermove", () => { hoveredSlot = { panel: this, slot: position }; });
     element.addEventListener("dragover", e => {
@@ -2914,7 +2964,8 @@ class LoaderPanel {
       if (data.types.includes(SLOT_MIME)) {
         try {
           const source = JSON.parse(data.getData(SLOT_MIME));
-          if (source.node === this.node.id && exchangeSlots(this.items, source.uid, position)) this.commit();
+          const sourcePanel = source.node === this.node.id ? this : this.node.graph?.getNodeById(source.node)?._mmlPanel;
+          if (sourcePanel) this.receiveReference(sourcePanel, source.uid, position);
         } catch (_) { /* Ignore foreign drag payloads. */ }
       } else if (data.files.length) this.add([...data.files], position);
     });
@@ -2929,33 +2980,39 @@ class LoaderPanel {
     element.querySelectorAll("img,a").forEach(child => child.draggable = false);
     let press = null, destination = null, suppressClick = false;
     element.addEventListener("pointerdown", e => {
+      if (this.isFolder && e.target.closest('video,audio')) { e.stopPropagation(); return; }
       if (e.button !== 0 || this.busy || e.target.closest("button,input,select,.gkh3mml-x,.gkh3mml-power,.gkh3mml-trimbtn,.gkh3mml-bar")) return;
       e.stopPropagation();
       press = { x: e.clientX, y: e.clientY, moved: false };
+      // Keep the initial movement even when a narrow drag handle is left
+      // in a single pointer event. Capture on the original target preserves
+      // ordinary clicks on previews until the drag threshold is crossed.
+      e.target.setPointerCapture?.(e.pointerId);
     });
     element.addEventListener("pointermove", e => {
       if (!press) return;
       if (!press.moved && Math.hypot(e.clientX - press.x, e.clientY - press.y) < 6) return;
-      if (!press.moved) element.setPointerCapture(e.pointerId);
       press.moved = true;
       e.preventDefault(); e.stopPropagation();
       element.classList.add("dragging");
       destination?.classList.remove("over");
       const hit = document.elementFromPoint(e.clientX, e.clientY)?.closest(".gkh3mml-slot");
-      destination = hit && this.root.contains(hit) ? hit : null;
+      const owner = hit && slotOwners.get(hit);
+      destination = owner && owner.node.graph === this.node.graph ? hit : null;
       destination?.classList.add("over");
     });
     const finish = (e, cancel = false) => {
       if (!press) return;
       const moved = press.moved;
       const position = destination ? Number(destination.dataset.slot) : null;
+      const targetPanel = destination && slotOwners.get(destination);
       press = null; destination?.classList.remove("over"); destination = null;
       element.classList.remove("dragging");
       if (element.hasPointerCapture(e.pointerId)) element.releasePointerCapture(e.pointerId);
       if (!moved) return;
       e.preventDefault(); e.stopPropagation(); suppressClick = true;
       this._ignoreSlotClickUntil = performance.now() + 250;
-      if (!cancel && exchangeSlots(this.items, item.uid, position)) this.commit();
+      if (!cancel && targetPanel) {targetPanel._ignoreSlotClickUntil=performance.now()+250;targetPanel.receiveReference(this,item.uid,position);}
     };
     element.addEventListener("pointerup", e => finish(e));
     element.addEventListener("pointercancel", e => finish(e, true));
@@ -2966,7 +3023,7 @@ class LoaderPanel {
     element.addEventListener("dragstart", e => {
       if (this.busy) { e.preventDefault(); return; }
       e.stopPropagation();
-      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.effectAllowed = "copyMove";
       e.dataTransfer.setData(SLOT_MIME, JSON.stringify({ node: this.node.id, uid: item.uid }));
       element.classList.add("dragging");
     });
@@ -2994,7 +3051,7 @@ class LoaderPanel {
   }
 
   drawPanel() {
-    this.items = arrangeSlots(this.items.map(withUid));
+    this.items = this.arrange(this.items.map(withUid));
     if (hoveredSlot?.panel === this) hoveredSlot = null;
     this.closeScaleMenu?.();
     this.closePresetMenu?.();
@@ -3003,12 +3060,19 @@ class LoaderPanel {
 
     const { tags, extra } = computeTags(this.items);
     const total = fileCount(this.items);
-    const pics = this.items.filter((i) => i.kind === "picture");
-    const vids = this.items.filter((i) => i.kind === "video");
-    const auds = this.items.filter((i) => i.kind === "audio");
+    const pageSize = this.isFolder ? this.folderPageSize() : Infinity;
+    const filtered = this.isFolder ? this.folderItems() : this.items;
+    this.page = Number.isFinite(pageSize) ? Math.min(this.page, Math.max(0, Math.ceil(filtered.length / pageSize) - 1)) : 0;
+    const visible = this.isFolder && Number.isFinite(pageSize) ? filtered.slice(this.page * pageSize, (this.page + 1) * pageSize) : filtered;
+    const pics = visible.filter((i) => i.kind === "picture");
+    const vids = visible.filter((i) => i.kind === "video");
+    const auds = visible.filter((i) => i.kind === "audio");
     const kids = [this.picker];
+    this.root.classList.toggle('gkh3mml-folder',this.isFolder);
+    if(this.isFolder)kids.push(this.folderControls());
 
-    kids.push(el("div", { class: "gkh3mml-top" },
+    if (this.isFolder) kids.push(this.folderToolbar(), this.folderFilters());
+    else kids.push(el("div", { class: "gkh3mml-top" },
       el("button", { class: "gkh3mml-btn", onclick: () => { this.pickerSlot = null; this.picker.click(); } },
         "Load files\u2026"),
       el("span", { style: { fontSize: "10px", color: "#6b7484" } },
@@ -3030,7 +3094,7 @@ class LoaderPanel {
         title: "Audio clips in play, including split video soundtracks" },
         `\u266a ${audioCount(this.items)}/${MAX.audio}`)));
 
-    const select = this.presetPicker();
+    const select = this.isFolder ? null : this.presetPicker();
     if (this.unloadPrompt) {
       kids.push(el("div", { class: "gkh3mml-presetrow" },
         el("span", { class: "gkh3mml-presetwarn" },
@@ -3043,6 +3107,7 @@ class LoaderPanel {
           "Cancel")));
     }
 
+    if (!this.isFolder) {
     if (this.presetPrompt === "save") {
       const input = el("input", { type: "text", class: "gkh3mml-presetname",
         placeholder: "Preset name",
@@ -3104,6 +3169,7 @@ class LoaderPanel {
           } }, "Delete")));
     }
 
+    }
     const audio = audioCount(this.items);
     const dur = durations(this.items);
     const problems = [];
@@ -3129,12 +3195,13 @@ class LoaderPanel {
         i.kind === "video")) && audio)
       problems.push("Audio can't be sent alone — add an image or video.");
 
-    kids.push(el("div", { class: "gkh3mml-msg" + (this.msgErr || problems.length ? " err" : "") },
-      problems.length ? problems[0] : this.msg));
+    kids.push(el("div", { class: "gkh3mml-msg" + (this.msgErr || (!this.isFolder && problems.length) ? " err" : "") },
+      !this.isFolder && problems.length ? problems[0] : this.msg));
 
     const left = el("div", { class: "gkh3mml-col" });
     const right = el("div", { class: "gkh3mml-col" });
-    kids.push(el("div", { class: "gkh3mml-cols" }, left, this.divider(), right));
+    const columns=el("div", { class: "gkh3mml-cols" }, left, this.divider(), right);
+    kids.push(columns);
 
     left.append(el("div", { class: "gkh3mml-sec" }, "pictures",
       el("span", {}, `${pics.length}/${MAX.picture}`)));
@@ -3163,7 +3230,7 @@ class LoaderPanel {
             dimsLabel(ow, oh));
 
           const img = el("img", { class: "gkh3mml-pic" + (quarter ? " turned" : ""),
-            src: viewURL(it.file),
+            src: viewURL(it.file), loading: this.isFolder ? "lazy" : "eager",
             style: flip,
             title: dimsTitle(it.name, it.width, it.height)
               + (turn ? `\nrotated ${turn}\u00b0` : "")
@@ -3220,14 +3287,14 @@ class LoaderPanel {
         })(),
         el("div", { class: "gkh3mml-picbar" },
           this.powerBtn(it),
-          el("span", { class: "gkh3mml-tag pic" }, isOn(it) ? tag : "off"),
+          this.isFolder ? null : el("span", { class: "gkh3mml-tag pic" }, isOn(it) ? tag : "off"),
           el("div", { class: "gkh3mml-picactions" },
           this.trimBtn(it),
           el("span", { class: "gkh3mml-drag", title: "Drag to reorder" }, "\u2630"),
           el("button", { type: "button", class: "gkh3mml-x", title: "Remove picture",
             onclick: e => { e.stopPropagation(); this.remove(it); } }, "\u2715")))), it));
     });
-    for (let i = pics.length; i < MAX.picture; i++)
+    for (let i = pics.length; !this.isFolder && i < MAX.picture; i++)
       picCells.push(this.emptySlot("picture", i + 1));
     left.append(el("div", { class: "gkh3mml-pics" }, picCells));
 
@@ -3238,6 +3305,7 @@ class LoaderPanel {
       el("span", {}, `${vids.length}/${MAX.video}`)));
     const vidCells = [];
     vids.forEach((it) => {
+      if (this.isFolder) { vidCells.push(this.folderMediaCard(it)); return; }
       const mode = it.audio_mode || "off";
       const splitTag = extra.get(it);
       const row = el("div", { class: "gkh3mml-row" },
@@ -3274,7 +3342,7 @@ class LoaderPanel {
           el("div", { class: "gkh3mml-tag vid" },
             isOn(it) ? (tags.get(it) || "").slice(1, -1) : "off"),
           el("div", { class: "gkh3mml-name", title: it.name }, it.name)));
-      if (it.has_audio && isOn(it)) {
+      if (!this.isFolder && it.has_audio && isOn(it)) {
         row.append(el("div", { class: "gkh3mml-segstack" },
           el("span", { class: "gkh3mml-tag aud gkh3mml-segtag" },
             mode === "off" ? "\u2014" : (splitTag || "").slice(1, -1)),
@@ -3301,7 +3369,7 @@ class LoaderPanel {
             }))));
       }
       row.append(
-        this.trimBtn(it),
+        ...(this.isFolder ? [] : [this.trimBtn(it)]),
         el("span", { class: "gkh3mml-drag", title: "Drag to reorder" }, "\u2630"),
         el("span", { class: "gkh3mml-x", title: "Remove",
           onclick: () => this.remove(it) }, "\u2715"));
@@ -3309,7 +3377,7 @@ class LoaderPanel {
         row);
       vidCells.push(this.reorderable(vcell, it));
     });
-    for (let i = vids.length; i < MAX.video; i++)
+    for (let i = vids.length; !this.isFolder && i < MAX.video; i++)
       vidCells.push(this.emptySlot("video", i + 1));
     right.append(el("div", { class: "gkh3mml-vids" }, vidCells));
 
@@ -3317,6 +3385,7 @@ class LoaderPanel {
       el("span", {}, `${auds.length}/${MAX.audio}`)));
     const audCells = [];
     auds.forEach((it) => {
+      if (this.isFolder) { audCells.push(this.folderMediaCard(it)); return; }
       const player = miniPlayer(viewURL(it.file));
       this.players.push(player);
       const arow = el("div", { class: "gkh3mml-row" },
@@ -3336,23 +3405,34 @@ class LoaderPanel {
         arow);
       audCells.push(this.reorderable(acell, it));
     });
-    for (let i = auds.length; i < MAX.audio; i++)
+    for (let i = auds.length; !this.isFolder && i < MAX.audio; i++)
       audCells.push(this.emptySlot("audio", i + 1));
     right.append(el("div", { class: "gkh3mml-auds" }, audCells),
       el("div", { class: "gkh3mml-spacer" }));
 
     const tiles = new Map([...picCells, ...vidCells, ...audCells]
       .filter(cell => cell.dataset.uid).map(cell => [Number(cell.dataset.slot), cell]));
-    for (const [container, kind, start, count] of [
+    if(!this.isFolder)for (const [container, kind, start, count] of [
       [left.querySelector(".gkh3mml-pics"), "picture", 0, 9],
       [right.querySelector(".gkh3mml-vids"), "video", 9, 3],
       [right.querySelector(".gkh3mml-auds"), "audio", 12, 3],
     ]) container.replaceChildren(...Array.from({length: count}, (_, i) =>
       tiles.get(start + i) || this.emptySlot(kind, i + 1)));
 
+    if(this.isFolder){
+      columns.className='gkh3mml-folder-grid';
+      const cells=visible.map(item=>{
+        const cell=tiles.get(item.genkai_slot);if(!cell)return null;
+        cell.title=item.name;cell.append(el('div',{class:'gkh3mml-folder-filename',title:item.name},item.name));return cell;
+      }).filter(Boolean);
+      const slot=this.items.reduce((max,i)=>Math.max(max,i.genkai_slot),-1)+1;
+      if (!visible.length && this.items.length) cells.push(el('div',{class:'gkh3mml-folder-empty',role:'status'},'No files of this type in the gallery.'));
+      cells.push(this.bindSlot(el('div',{class:'gkh3mml-slot gkh3mml-folder-drop',title:'Drop a reference here to add it',onclick:()=>{this.pickerSlot=null;this.picker.click();}},'+ Drop a reference'),slot));
+      columns.replaceChildren(...cells);kids.push(this.folderFooter());
+    }
     const order = [];
-    pics.filter(isOn).forEach((i) => order.push((tags.get(i) || "").slice(1, -1)));
-    vids.filter(isOn).forEach((i) => {
+    this.items.filter(i=>i.kind==='picture'&&isOn(i)).forEach((i) => order.push((tags.get(i) || "").slice(1, -1)));
+    this.items.filter(i=>i.kind==='video'&&isOn(i)).forEach((i) => {
       if (extra.has(i) && i.audio_mode === "paired")
         order.push(`[${(extra.get(i) || "").slice(1, -1)}]`);
       order.push((tags.get(i) || "").slice(1, -1));
@@ -3362,7 +3442,7 @@ class LoaderPanel {
       else if (i.kind === "video" && i.audio_mode === "standalone" && extra.has(i))
         order.push(`[${(extra.get(i) || "").slice(1, -1)}]`);
     });
-    kids.push(el("div", { class: "gkh3mml-order" },
+    if (!this.isFolder) kids.push(el("div", { class: "gkh3mml-order" },
       el("b", {}, "tag order sent to the model"),
       el("div", {}, order.length ? order.join(" \u00b7 ") : "nothing loaded yet")));
 
@@ -3479,6 +3559,7 @@ export function openLoaderModal(node, opts = {}) {
   const { onClose, store, storeLabel, draft = false, note = "" } = opts;
   const panel = new LoaderPanel(node, { store, storeLabel });
   const close = () => {
+    panel._disposed=true;
     node._mmlPanels = (node._mmlPanels || []).filter((p) => p !== panel);
     panel.players.forEach((p) => p.stop());
     overlay.remove();
@@ -3494,7 +3575,7 @@ export function openLoaderModal(node, opts = {}) {
     el("div", { class: "gkh3mml-modal" + (draft ? " draft" : "") },
       el("div", { class: "gkh3mml-modalhead" },
         draft ? el("span", { class: "gkh3mml-draftbadge" }, "DRAFT") : null,
-        storeLabel || "H3 Media Loader (genkai)",
+        storeLabel || (panel.isFolder ? 'Media Folder (genkai)' : "H3 Media Loader (genkai)"),
         el("button", { title: "Close", onclick: close }, "\u2715")),
       note ? el("div", { class: "gkh3mml-draftnote" }, note) : null,
       el("div", { class: "gkh3mml-modalbody" }, panel.root)));
@@ -3504,29 +3585,30 @@ export function openLoaderModal(node, opts = {}) {
   return panel;
 }
 
+installFolderUI(LoaderPanel,{el,postApi,viewURL,lightbox});
+
 /* ------------------------------------------------------------ extension */
 
 app.registerExtension({
   name: "GENKAI.H3MediaLoader",
   async beforeRegisterNodeDef(nodeType, nodeData) {
-    if (nodeData.name !== LOADER_NAME) return;
+    if (![LOADER_NAME,FOLDER_NAME].includes(nodeData.name)) return;
 
     const onNodeCreated = nodeType.prototype.onNodeCreated;
     nodeType.prototype.onNodeCreated = function () {
       try {
         const r = onNodeCreated?.apply(this, arguments);
         injectCSS();
-        const w = this.widgets?.find((w) => w.name === "media_state");
-        if (w) {
-          w.hidden = true;
-          w.type = "hidden";
-          w.computeSize = () => [0, -4];
+        for(const w of this.widgets || [])if(['media_state','folder_path','recursive'].includes(w.name)){
+          w.hidden=true;w.type='hidden';w.computeSize=()=>[0,-4];
         }
         // Built-in widgets go first: in Nodes 2.0 a widget added after a DOM
         // widget anchors to the node's bottom and leaves a gap on resize.
+        if (nodeData.name !== FOLDER_NAME) {
         this.addWidget("button", "Open loader\u2026", null, () => openLoaderModal(this));
         this.addWidget("button", "+ Native-output splitter", null,
           () => addSplitter(this));
+        }
 
         this._mmlPanel = new LoaderPanel(this);
         const widget = this.addDOMWidget("mml_panel", "div", this._mmlPanel.root,
@@ -3549,6 +3631,14 @@ app.registerExtension({
 
     };
 
+    if(nodeData.name===FOLDER_NAME){
+      const serialize=nodeType.prototype.onSerialize;
+      nodeType.prototype.onSerialize=function(info){
+        const result=serialize?.apply(this,arguments);
+        info.widgets_values=['folder_path','recursive','media_state'].map(name=>this.widgets.find(w=>w.name===name)?.value);
+        return result;
+      };
+    }
     // Canvas-only: Vue owns sizing there, so failure here must be harmless.
     const onResize = nodeType.prototype.onResize;
     nodeType.prototype.onResize = function (size) {
@@ -3568,6 +3658,7 @@ app.registerExtension({
     const onRemoved = nodeType.prototype.onRemoved;
     nodeType.prototype.onRemoved = function () {
       for (const panel of this._mmlPanels || []) {
+        panel._disposed=true;
         clearTimeout(panel._matchTimer);
         panel.players.forEach(p => p.stop());
         if (hoveredSlot?.panel === panel) hoveredSlot = null;
@@ -3577,7 +3668,16 @@ app.registerExtension({
 
     const onConfigure = nodeType.prototype.onConfigure;
     nodeType.prototype.onConfigure = function () {
+      const migrateFolder = nodeData.name === FOLDER_NAME && !arguments[0]?.properties?.genkaiFolderUIVersion;
       const r = onConfigure?.apply(this, arguments);
+      if (nodeData.name === FOLDER_NAME) {
+        if (migrateFolder) {
+          this.properties.genkaiMediaLayout ||= {};
+          this.properties.genkaiMediaLayout.style = 'obsidian';
+          this.properties.genkaiFolderUIVersion = 2;
+        }
+        while (this.outputs?.length) this.removeOutput(this.outputs.length - 1);
+      }
       setTimeout(() => {
         if (this._mmlPanel) {
           this._mmlPanel.items = this._mmlPanel.read();

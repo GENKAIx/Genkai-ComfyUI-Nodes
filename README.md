@@ -188,6 +188,31 @@ Based on the MIT-licensed media nodes by [Adudeguyman](https://github.com/Adudeg
 
 </details>
 
+## Media Folder
+
+![Media Folder with folder thumbnails, media filters and a scrollbar](docs/images/media-folder.png)
+
+Browse images, videos and audio from a folder as a thumbnail gallery. Drag files between **Media Folder** and **H3 Media Loader** in either direction.
+
+<details>
+<summary>Description, features and settings</summary>
+
+- Paste a folder path and click **Load folder**, or press Enter. Enable **Subfolders** to include nested folders. **Load files…** adds individual files.
+- Filter the gallery with **All / Images / Videos / Audio** tags and file counts. Filtering changes only what is displayed.
+- Click pictures for a larger preview. Video and audio cards include playback controls and duration; double-click a video to enlarge it.
+- Drag a thumbnail or its drag handle into **H3 Media Loader**, or drag a reference back into Media Folder. Transfers copy the reference and its processing settings; the source remains in place. Within one node, drag to reorder or swap references. Dropping onto an occupied slot replaces its reference when transferring between nodes.
+- **30 files per page** by default, with a visible scrollbar. In **Settings**, change the page size or enable **Unlimited files per page** to show everything together.
+- **Obsidian** is the default style. Settings also include other styles, text size and resizing with the node.
+- The folder path, gallery contents, filter and settings are saved with the workflow. Removing a thumbnail or choosing **Unload media** does not delete the original files.
+
+Media Folder is a browsing panel with no workflow output, splitter or presets. To use a reference in a workflow, drag it into H3 Media Loader and use H3 Reference Splitter. The loader's reference limits still apply.
+
+Folder paths refer to the computer running ComfyUI. External media is cached in `ComfyUI/input/genkai_media_folder`; browser playback depends on the file's codec.
+
+[Example workflow](examples/media_folder_h3.json) · [More details](README_MediaFolder.md)
+
+</details>
+
 ## Prompt Bank + Prompt Merge
 
 ![Prompt Bank connected to Prompt Merge, with named switches and a combined text preview](docs/images/prompt-bank-merge.png)

@@ -1,0 +1,127 @@
+{
+  "revision": 0,
+  "last_node_id": 2,
+  "last_link_id": 0,
+  "nodes": [
+    {
+      "id": 2,
+      "type": "GenkaiMediaBank",
+      "pos": [
+        1090,
+        60
+      ],
+      "size": [
+        1000,
+        900
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "media_state",
+          "name": "media_state",
+          "type": "STRING",
+          "widget": {
+            "name": "media_state"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "localized_name": "references",
+          "name": "references",
+          "type": "H3_REFS",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GenkaiMediaBank",
+        "genkaiMediaLayout": {
+          "style": "gold",
+          "dynamicResize": true
+        }
+      },
+      "widgets_values": [
+        "[]"
+      ]
+    },
+    {
+      "id": 1,
+      "type": "GenkaiMediaFolder",
+      "pos": [
+        30,
+        60
+      ],
+      "size": [
+        1000,
+        900
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "localized_name": "folder_path",
+          "name": "folder_path",
+          "type": "STRING",
+          "widget": {
+            "name": "folder_path"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "recursive",
+          "name": "recursive",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "recursive"
+          },
+          "link": null
+        },
+        {
+          "localized_name": "media_state",
+          "name": "media_state",
+          "type": "STRING",
+          "widget": {
+            "name": "media_state"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "GenkaiMediaFolder",
+        "genkaiMediaLayout": {
+          "style": "obsidian",
+          "dynamicResize": true
+        },
+        "genkaiFolderUIVersion": 2,
+        "genkaiFolderView": {
+          "unlimited": false,
+          "pageSize": 30,
+          "filter": "all"
+        }
+      },
+      "widgets_values": [
+        "",
+        false,
+        "[]"
+      ]
+    }
+  ],
+  "links": [],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.75,
+      "offset": [
+        60,
+        60
+      ]
+    }
+  },
+  "version": 0.4
+}
