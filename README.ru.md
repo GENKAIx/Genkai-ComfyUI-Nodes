@@ -16,6 +16,8 @@
 
 https://github.com/user-attachments/assets/b0ac1e71-b139-49ce-98a5-c3e015adcd86
 
+Сравнивайте сгенерированное видео с промптом по таймингам: текущая сцена подсвечивается во время просмотра. Помогает заметить, что модель выполнила, пропустила или сместила по времени.
+
 <details>
 <summary>Описание, возможности и настройки</summary>
 
@@ -63,6 +65,8 @@ https://github.com/user-attachments/assets/b0ac1e71-b139-49ce-98a5-c3e015adcd86
 ## PromptSync + Save
 
 ![PromptSync + Save](docs/images/promptsync-save.png)
+
+Просматривайте видео с синхронной подсветкой промпта и сохраняйте его со звуком и метаданными воркфлоу. Под видео отображаются звуковая волна и статистика времени генерации.
 
 <details>
 <summary>Описание, возможности и настройки</summary>
@@ -120,6 +124,8 @@ https://github.com/user-attachments/assets/b0ac1e71-b139-49ce-98a5-c3e015adcd86
 
 https://github.com/user-attachments/assets/1c1792dc-1597-48b5-816c-4c7cc20ec643
 
+Сравнивайте два видео синхронно в двух режимах: друг под другом или наложением с подвижной вертикальной шторкой. Можно добавить общий промпт с таймингами и отдельно управлять звуком каждого видео.
+
 <details>
 <summary>Описание, возможности и настройки</summary>
 
@@ -158,6 +164,8 @@ https://github.com/user-attachments/assets/1c1792dc-1597-48b5-816c-4c7cc20ec643
 
 ![H3 Media Loader и H3 Reference Splitter с изображениями, видео и аудио в стиле Obsidian](docs/images/h3-media-loader.png)
 
+Собирайте изображения, видео и аудиореференсы в одной панели и передавайте их дальше через отдельные выходы. Есть редактирование медиа, перестановка перетаскиванием и сохранение пресетов.
+
 <details>
 <summary>Описание, возможности и настройки</summary>
 
@@ -184,6 +192,8 @@ https://github.com/user-attachments/assets/1c1792dc-1597-48b5-816c-4c7cc20ec643
 
 ![Prompt Bank и Prompt Merge: подписи, переключатели и предпросмотр объединённого промпта](docs/images/prompt-bank-merge.png)
 
+Собирайте промпт из отдельных частей: храните их в Prompt Bank и выбирайте, какие объединить в Prompt Merge. Включайте нужные фрагменты и задавайте свой разделитель.
+
 <details>
 <summary>Описание, возможности и настройки</summary>
 
@@ -209,6 +219,8 @@ https://github.com/user-attachments/assets/1c1792dc-1597-48b5-816c-4c7cc20ec643
 
 ![Folder Search](docs/images/folder-search.png)
 
+Находите изображения, видео и другие файлы в папке и передавайте их пути в воркфлоу. Можно получить весь список или обрабатывать файлы по одному.
+
 <details>
 <summary>Описание, возможности и настройки</summary>
 
@@ -232,6 +244,8 @@ https://github.com/user-attachments/assets/1c1792dc-1597-48b5-816c-4c7cc20ec643
 
 ![Image Expand With Fill](docs/images/image-expand-with-fill.png)
 
+Добавляйте пространство по краям изображения, сохраняя размер оригинала. Новые области заполняются растянутыми крайними пикселями или чёрным цветом.
+
 <details>
 <summary>Описание, возможности и настройки</summary>
 
@@ -248,6 +262,8 @@ https://github.com/user-attachments/assets/1c1792dc-1597-48b5-816c-4c7cc20ec643
 ## Seed Slots
 
 https://github.com/user-attachments/assets/5607fd79-25a7-4cc7-8aac-1713e3511ed5
+
+Добавьте немного забавы в ComfyUI: крутите игровой автомат и используйте выпавший сид для генерации. Комбинации приносят очки, а крупные выигрыши сопровождаются огнями и конфетти.
 
 <details>
 <summary>Описание, возможности и настройки</summary>

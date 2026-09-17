@@ -16,6 +16,8 @@
 
 https://github.com/user-attachments/assets/b0ac1e71-b139-49ce-98a5-c3e015adcd86
 
+Watch a generated video alongside its timed prompt, with the current scene highlighted. See which actions the model followed, skipped or shifted in time.
+
 <details>
 <summary>Description, features and settings</summary>
 
@@ -63,6 +65,8 @@ The waveform is decoded locally from the actual audio. A missing audio track and
 ## PromptSync + Save
 
 ![PromptSync + Save with collapsible settings, timed prompt, waveform, and workflow timing](docs/images/promptsync-save.png)
+
+Preview your video with a synchronized prompt, then save it with audio and optional workflow metadata. Includes an audio waveform and workflow execution statistics.
 
 <details>
 <summary>Description, features and settings</summary>
@@ -120,6 +124,8 @@ The `meta_batch` input supports processing image/latent batches in parts. Set `l
 
 https://github.com/user-attachments/assets/1c1792dc-1597-48b5-816c-4c7cc20ec643
 
+Compare two videos in sync: stacked one above the other or overlaid with a draggable vertical divider. Add a shared timed prompt and control each video’s sound independently.
+
 <details>
 <summary>Description, features and settings</summary>
 
@@ -158,6 +164,8 @@ Both nodes are in **GENKAI/Video**. Use browser-compatible files, such as MP4 wi
 
 ![H3 Media Loader and H3 Reference Splitter with images, video and audio in the Obsidian style](docs/images/h3-media-loader.png)
 
+Organize images, videos and audio references in one panel, then pass them to your workflow through separate outputs. Includes media editing, drag-and-drop ordering and saved presets.
+
 <details>
 <summary>Description, features and settings</summary>
 
@@ -184,6 +192,8 @@ Based on the MIT-licensed media nodes by [Adudeguyman](https://github.com/Adudeg
 
 ![Prompt Bank connected to Prompt Merge, with named switches and a combined text preview](docs/images/prompt-bank-merge.png)
 
+Build prompts from reusable pieces: store them in Prompt Bank, then choose which ones Prompt Merge combines. Toggle individual parts and set your own separator.
+
 <details>
 <summary>Description, features and settings</summary>
 
@@ -209,6 +219,8 @@ No extra models or custom node packs are needed. Find both nodes under **GENKAI/
 
 ![Folder Search node and its file scanning settings](docs/images/folder-search.png)
 
+Find images, videos or other files in a folder and pass their paths to your workflow. Return the full list or process files one at a time.
+
 <details>
 <summary>Description, features and settings</summary>
 
@@ -232,6 +244,8 @@ The `output` contains a list or a string, depending on the mode. Without `infini
 
 ![Image Expand With Fill node with padding and fill settings](docs/images/image-expand-with-fill.png)
 
+Add space around an image without resizing the original. Fill the new borders with stretched edge pixels or black.
+
 <details>
 <summary>Description, features and settings</summary>
 
@@ -248,6 +262,8 @@ The original image area is not resized. This node does not perform generative ou
 ## Seed Slots
 
 https://github.com/user-attachments/assets/5607fd79-25a7-4cc7-8aac-1713e3511ed5
+
+Add a little fun to ComfyUI: spin a slot machine to choose your generation seed. Collect combinations and points, with animated lights and confetti for big scores.
 
 <details>
 <summary>Description, features and settings</summary>
