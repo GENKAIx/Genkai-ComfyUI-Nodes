@@ -87,9 +87,9 @@ The `Filenames` output is compatible with `VHS_FILENAMES` and contains only the 
 - **Autoplay and repeat:** a newly received video starts automatically. **Repeat preview → Loop** is the default and repeats until you pause it; choose **Once** for a single playback. This does not add repetitions to the saved file.
 - **Remembered volume:** starts at **25%**. Your selected level persists between generations and is saved with the workflow.
 - **Sound only on hover:** the default **Hover** mode enables sound over the video preview. Choose **Always** to keep sound on away from the preview. This setting affects playback only. Browsers may require an initial interaction before allowing audible autoplay.
-- **Labeled details below the waveform:** playback position and duration, video resolution, complete workflow execution time, and execution time per second of video, in a larger, left-aligned font.
+- **Labeled details below the waveform:** playback position and duration, video resolution, time until the video reaches this node, and time per second of video, in a larger, left-aligned font.
 
-The built-in timer measures from ComfyUI's execution start to workflow completion, including saving, excluding queue waiting time. **Time per video second = workflow execution time ÷ video duration.** It measures the current run, so cached work can make the result faster; it does not isolate the model's generation time. Keep the interface connected during the run to capture the timing. Results are retained when you save the workflow; older previews without a recorded measurement show a dash. No separate timer node or extra timer package is required.
+The built-in timer measures from ComfyUI's execution start until the finished video reaches this node, including video saving but excluding queue waiting time and any later nodes. **Time per video second = video ready time ÷ video duration.** It measures the current run, so cached work can make the result faster; it does not isolate the model's generation time. Keep the interface connected during the run to capture the timing. Results are retained when you save the workflow; older previews without a recorded measurement show a dash. No separate timer node or extra timer package is required.
 
 ### Save settings
 

@@ -85,24 +85,15 @@ app.registerExtension({
             const result = executed?.apply(this, arguments);
             const data = message?.genkai_preview?.[0];
             if (data) {
-                this.genkaiStopTiming?.();
+                if (nodeData.name === "GenkaiVideoPromptViewerSave") data.execution = executionTiming.capture();
                 this.properties.genkaiPreview = data;
                 this.genkaiViewer?.setData(data);
-                if (nodeData.name === "GenkaiVideoPromptViewerSave") {
-                    this.genkaiStopTiming = executionTiming.watch(timing => {
-                        if (this.properties.genkaiPreview !== data) return;
-                        data.execution = timing;
-                        this.genkaiViewer?.setExecution(timing);
-                        this.setDirtyCanvas(true, true);
-                    });
-                }
                 this.setDirtyCanvas(true, true);
             }
             return result;
         };
         const configured = nodeType.prototype.onConfigure;
         nodeType.prototype.onConfigure = function () {
-            this.genkaiStopTiming?.();
             const result = configured?.apply(this, arguments);
             this.genkaiViewer?.setPreferences(this.properties?.genkaiPreferences);
             this.genkaiSaveControls?.apply();
@@ -111,7 +102,6 @@ app.registerExtension({
         };
         const removed = nodeType.prototype.onRemoved;
         nodeType.prototype.onRemoved = function () {
-            this.genkaiStopTiming?.();
             this.genkaiViewer?.dispose();
             return removed?.apply(this, arguments);
         };

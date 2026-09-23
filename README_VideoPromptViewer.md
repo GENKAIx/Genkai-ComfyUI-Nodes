@@ -18,9 +18,9 @@ Save settings are collapsed by default. Expand the button above the preview to e
 
 New videos autoplay. `Repeat preview` defaults to Loop; Once disables looping. Manual pause stops playback. `Sound only on hover` defaults to Hover; Always keeps audio enabled outside the preview. Initial volume is 25%, and changes persist across results and workflow saves. Browser autoplay policy may require a first interaction for sound; blocked audible autoplay falls back to muted playback. These controls never modify the saved media.
 
-Below the waveform, labeled, left-aligned rows show playback position/duration, resolution, workflow time, and time per video second. The timer listens to ComfyUI execution events and uses server timestamps when available, with a local monotonic fallback. It records a successful run from execution_start to execution_success, including downstream work and saving but excluding queue waiting. Errors and interruptions are labeled and do not produce a completed-run ratio. The interface must remain connected to capture the events. Cached runs measure the current execution, not the historical cost of creating cached results. Unknown timing or duration displays a dash.
+Below the waveform, labeled, left-aligned rows show playback position/duration, resolution, video ready time, and time per video second. The timer starts at ComfyUI's execution_start event and stops when the finished video reaches this node, even if execution_success is delivered first. It includes video saving but excludes queue waiting and downstream work after the video reaches the node. The interface must remain connected to capture the start event. Cached runs measure the current execution, not the historical cost of creating cached results. Unknown timing or duration displays a dash.
 
-The ratio is execution seconds divided by video duration in seconds. Timing is retained in the preview data when the workflow is saved; it is not retroactively inserted into an already encoded MP4. No third-party timer node is used.
+The ratio is video ready time divided by video duration in seconds. Timing is retained in the preview data when the workflow is saved; it is not retroactively inserted into an already encoded MP4. No third-party timer node is used.
 
 ## Original viewer and shared timeline
 

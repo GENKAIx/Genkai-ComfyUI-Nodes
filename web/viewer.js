@@ -149,13 +149,13 @@ export function createViewer({resolveVideo, resolveWaveform, preferences = {}, o
         const state = execution?.status === "running" ? "Running…" : execution?.status === "failed" ? "Failed" : execution?.status === "interrupted" ? "Interrupted" : "—";
         const time = complete ? formatExecutionTime(execution.seconds) : state;
         const cost = complete && Number.isFinite(video.duration) && video.duration > 0 ? `${(execution.seconds / video.duration).toFixed(2)} s` : "—";
-        const timingText = `Workflow time: ${time}`;
+        const timingText = `Video ready time: ${time}`;
         const costText = `Time per video second: ${cost}`;
         if (executionTime.textContent !== timingText) executionTime.textContent = timingText;
         if (secondsCost.textContent !== costText) secondsCost.textContent = costText;
     }
-    executionTime.title = "Complete workflow execution, including video saving; queue waiting time is excluded.";
-    secondsCost.title = "Workflow execution time divided by this video's duration.";
+    executionTime.title = "From workflow execution start until this node receives the video, including video saving; queue waiting time is excluded.";
+    secondsCost.title = "Time until this node receives the video, divided by its duration.";
     function jump(time) {
         if (!(video.duration > 0)) return;
         video.currentTime = Math.max(0, Math.min(video.duration, time)); update(false);
