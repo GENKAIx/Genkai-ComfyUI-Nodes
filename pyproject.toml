@@ -1,0 +1,17 @@
+[project]
+name = "genkai-nodes"
+version = "1.0.0"
+description = "PromptSync video tools, MiniMax H3 media references, prompt utilities, and video comparison nodes for ComfyUI."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/GENKAIx/Genkai-ComfyUI-Nodes"
+Documentation = "https://github.com/GENKAIx/Genkai-ComfyUI-Nodes#readme"
+"Bug Tracker" = "https://github.com/GENKAIx/Genkai-ComfyUI-Nodes/issues"
+
+[tool.comfy]
+# Create this publisher ID at registry.comfy.org before publishing.
+PublisherId = "genkaix"
+DisplayName = "GENKAI Nodes"
