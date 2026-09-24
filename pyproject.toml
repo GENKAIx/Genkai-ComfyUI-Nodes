@@ -12,6 +12,5 @@ Documentation = "https://github.com/GENKAIx/Genkai-ComfyUI-Nodes#readme"
 "Bug Tracker" = "https://github.com/GENKAIx/Genkai-ComfyUI-Nodes/issues"
 
 [tool.comfy]
-# Create this publisher ID at registry.comfy.org before publishing.
-PublisherId = "genkaix"
+PublisherId = "genkai"
 DisplayName = "GENKAI Nodes"
