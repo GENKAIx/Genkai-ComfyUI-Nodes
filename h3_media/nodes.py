@@ -135,6 +135,7 @@ class MiniMaxH3MediaLoader:
         vid_t = [media_io.load_video_frames(i["file"], start=_trim(i)[0],
                  end=_trim(i)[1], crop=i.get("crop"),
                  mirror=bool(i.get("mirror")),
+                 rotate=i.get("rotate") or 0,
                  resize=i.get("resize"))
                  for i in videos[:VIDEOS]]
         vaud_t = [

@@ -175,6 +175,7 @@ Keep your image, video and audio references together in one panel. Connect **H3 
 - Load files through the file picker or drag-and-drop. Hover over a slot and press **Ctrl+V** to paste an image.
 - Drag references between slots: an occupied slot swaps with the source; an empty slot receives the reference and leaves its previous position empty. Moving media does not change its data type.
 - Crop, rotate or mirror pictures; trim video/audio, capture frames and extract audio. Video sound can be off, paired with the video or used separately.
+- Open a video clip's edit window and click **Download MP4** to export its current trim, crop, rotation, mirror and size at 24 FPS. **Audio** is included by default when the source has a soundtrack; uncheck it for a silent export. The original stays unchanged, and a copy is also saved in `ComfyUI/output/genkai_h3_exports`.
 - Save named media presets and restore reference sets later.
 - Choose **Original**, **Gold** (default), **Obsidian**, **Light Studio** or **High Contrast**. Large image switches and aligned action buttons make the slots easier to use.
 - Drag the divider to give either column more space. **Resize contents with node** is enabled by default in **Size**, so the panel follows the node's size.
@@ -185,6 +186,27 @@ The loader outputs an `H3_REFS` bundle. The splitter provides `picture_1`–`pic
 Based on the MIT-licensed media nodes by [Adudeguyman](https://github.com/Adudeguyman/ComfyUI-Fantastic-MiniMaxH3-PromptBuilder), with GENKAI interface additions. All required loader and splitter code is included in this pack; the original pack does not need to be installed.
 
 [Example workflow](examples/Media%20Bank%20and%20Reference%20Splitter.json) · [More details](README_MediaBank.md)
+
+</details>
+
+## H3 Prompt Studio
+
+Write long MiniMax H3 prompts with automatic visual sections, timing markers and highlighted references. Connect **H3 Media Loader** to see thumbnails for the pictures and videos actually mentioned in the text; the output is an ordinary `STRING` prompt.
+
+<details>
+<summary>Description, features and settings</summary>
+
+**H3 Prompt Studio (genkai)** automatically recognizes category headings such as `AUDIO` and `REFERENCE USAGE`, H3 section names, shot/time lines, `<Picture N>` / `<Video N>` / `<Audio N>` labels, and film terms such as `HARD CUT` and `RACK FOCUS`. It changes only their presentation; the saved prompt and `text` output remain plain text.
+
+- Connect the optional **references** input directly to **H3 Media Loader**. The editor follows the loader's enabled slot order, shows used image/video previews in its sidebar, and marks references that are no longer active. This authoring link does not require decoding media when only the prompt text is executed.
+- Use the **Sections** and **References** menus to insert headings and the loader's current reference labels. The outline jumps to recognized headings and timed shots. T2VA, I2VA, FL2VA, L2VA and Ref2VA templates are available; section diagnostics are optional in **Free** mode.
+- Hover over highlighted editing/camera terms for short explanations. Choose Russian or English under **Settings**; the selected language changes hints, not the prompt text.
+- **↶ / ↷** undo and redo prompt edits; `Ctrl+Z`, `Ctrl+Y` and `Ctrl+Shift+Z` work in the editor too. Timed shot lines use a narrow marker instead of a solid highlight across the whole paragraph.
+- Choose **Obsidian**, **Filmstrip**, **Signal Lab** or **Screenplay**. The four styles vary the treatment of section bands, timing and the editor itself. Rich highlighting can be switched off while retaining the same text.
+- Rich highlighting remains visible while editing. The decorations and caret share one editable surface, so clicking, selecting and deleting use the same character positions.
+- Prompt text, style, mode, hint language and font size are saved with the workflow. Resize the node to give the editor and reference sidebar more room.
+
+Find the node under **GENKAI/Text**. It is implemented in this pack and does not depend on H3 Prompt IDE.
 
 </details>
 
@@ -284,6 +306,20 @@ The original image area is not resized. This node does not perform generative ou
 
 </details>
 
+## Image Canvas Expand
+
+Load an image and crop or enlarge its canvas visually. Open **Crop / expand** to drag any edge or corner inward to crop or outward to expand. You can also enter exact edge values in pixels: negative values crop, positive values expand. The editor shows the original and output dimensions before applying.
+
+Choose black, white or a custom hex color for any added area. The node returns the edited `IMAGE`; the uploaded file stays unchanged. Find **Image Canvas Expand (genkai)** under `GENKAI/Image`.
+
+## Float Presets
+
+Pick a saved `FLOAT` value with one click. Use two copies to control megapixels and video length independently.
+
+The frameless Obsidian layout gives all number tiles equal size. They grow in width and height when the node widens and wrap into more rows when needed. The selected number is green. Click a tile to select its value; click the number itself to edit it. **+** adds a new value, and a small **×** appears on hover to remove one. The selected value and presets are saved with the workflow. Clicking a tile changes the value for the next run; it does not queue a run.
+
+Connect the `FLOAT` output to a numeric input. If the target setting is shown only as a widget, expose it as an input first.
+
 ## Seed Slots
 
 https://github.com/user-attachments/assets/5607fd79-25a7-4cc7-8aac-1713e3511ed5
@@ -319,7 +355,7 @@ git clone https://github.com/GENKAIx/Genkai-ComfyUI-Nodes.git
 
 Restart ComfyUI and refresh your browser with **Ctrl+F5**. Search for the nodes by name. Viewers are in `GENKAI/Video`, H3 media nodes in `GENKAI/Media`, Prompt Bank / Prompt Merge in `GENKAI/Text`, Seed Slots in `GENKAI/Seeds`, and Folder Search / Image Expand With Fill in `GENKAI nodes`.
 
-Use a current ComfyUI installation with `VIDEO` and `comfy_api.latest` support. The pack uses PyTorch, NumPy, PyAV, and aiohttp from the ComfyUI environment.
+Use a current ComfyUI installation with `VIDEO` and `comfy_api.latest` support. The pack uses PyTorch, NumPy, PyAV, and aiohttp from the ComfyUI environment. Float Presets is in `GENKAI/Utilities`.
 
 For **PromptSync + Save**, also install [ComfyUI-VideoHelperSuite](https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite) and its dependencies. VHS Video Combine handles encoding, and FFmpeg must support the selected codec. The standard PromptSync viewer only needs VHS when using a `VHS_FILENAMES` source.
 

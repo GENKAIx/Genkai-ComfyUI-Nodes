@@ -683,6 +683,11 @@ const CSS = `
 .gkh3mml-tmfoot{display:flex;align-items:center;gap:5px;padding:8px 12px 0;
   flex-wrap:wrap;}
 .gkh3mml-tmfoot.act{padding:8px 12px 4px;border-top:1px solid #23272f;margin-top:8px;}
+.gkh3mml-exporttools{display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.gkh3mml-exportaudio{display:inline-flex;align-items:center;gap:3px;color:#aeb8c7;
+  font-size:calc(10px * var(--gkh3mml-fs, 1));white-space:nowrap;cursor:pointer;}
+.gkh3mml-exportaudio input{accent-color:#d8aa54;margin:0;}
+.gkh3mml-exporttools button:disabled{opacity:.55;cursor:wait;}
 .gkh3mml-tmgap{width:8px;}
 .gkh3mml-tmspace{flex:1;}
 .gkh3mml-tmnum{width:52px;background:#12151b;color:#dde2ea;border:1px solid #2e3440;
@@ -866,6 +871,7 @@ class TrimModal {
     this.rotate = ((parseInt(item.rotate, 10) || 0) % 360 + 360) % 360;
     // RefMods ignore the loader's size cap (Create's resolution decides size).
     this.resize = opts.refmod ? 0 : (parseInt(item.resize, 10) || 0);
+    this.exporting = false;
     this.cropMode = false;
     this.aspect = "free";
     if (opts.aspect > 0) {
@@ -1379,6 +1385,40 @@ class TrimModal {
     }
   }
 
+  /** Download an MP4 with the edits currently shown in this editor. */
+  async exportVideo() {
+    if (this.exporting) return;
+    this.exporting = true;
+    this.exportButton.disabled = true;
+    this.exportButton.textContent = "Rendering MP4\u2026";
+    this.modalSay("Rendering the selected range at 24 FPS. The original stays unchanged.");
+    try {
+      const resp = await postApi("/genkai/h3_media/export_video", {
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          file: this.item.file, start: this.start, end: this.end,
+          crop: this.crop, mirror: this.mirror, rotate: this.rotate,
+          resize: this.resize, include_audio: this.includeAudio?.checked !== false,
+        }),
+      });
+      const info = await resp.json().catch(() => ({}));
+      if (!resp.ok) throw new Error(info.error || `export failed (${resp.status})`);
+      const link = document.createElement("a");
+      link.href = viewURL(info.file);
+      link.download = info.name;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      this.modalSay(`Downloaded ${info.name}. A copy is also in ComfyUI/output/genkai_h3_exports.`);
+    } catch (err) {
+      this.modalSay(`Could not export video: ${err.message}`, true);
+    } finally {
+      this.exporting = false;
+      this.exportButton.disabled = false;
+      this.exportButton.textContent = "\u2b07 Download MP4";
+    }
+  }
+
   /** Source size, and what will actually be sent when they differ. */
   showSize() {
     if (!this.cropInfo) return;
@@ -1749,6 +1789,15 @@ class TrimModal {
             "Last \u23ed")),
         el("div", { class: "gkh3mml-tmfoot act" },
           ...(still ? [] : chips),
+          isVid && !this.opts.noAdd ? el("span", { class: "gkh3mml-exporttools" },
+            this.item.has_audio ? el("label", { class: "gkh3mml-exportaudio" },
+              this.includeAudio = el("input", { type: "checkbox", checked: true }),
+              "Audio") : null,
+            this.exportButton = el("button", {
+              class: "gkh3mml-btn gkh3mml-sm",
+              title: "Download the selected trim, crop, mirror, rotation and size as MP4",
+              onclick: () => this.exportVideo(),
+            }, "\u2b07 Download MP4")) : null,
           (isVid && !still && !this.opts.noAdd) ? el("button", { class: "gkh3mml-btn gkh3mml-sm",
             title: "Add the frame shown above as a picture reference  ( C )",
             onclick: () => this.captureFrame() }, "\u{1F4F7} Use frame") : null,

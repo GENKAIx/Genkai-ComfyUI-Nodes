@@ -4,6 +4,7 @@
 """HTTP routes backing the Media Loader's drag-drop and file picker."""
 
 
+import asyncio
 import hashlib
 
 
@@ -576,6 +577,48 @@ if PromptServer is not None and web is not None:
             "width": img.size[0], "height": img.size[1],
             "was": [was[0], was[1]],
         })
+
+
+    @routes.post("/genkai/h3_media/export_video")
+    @_guard()
+    async def export_video_route(request):
+        """Render the chosen video edits to an MP4 in ComfyUI's output folder."""
+        try:
+            body = await request.json()
+            annotated = str(body.get("file") or "")
+            source = media_io.resolve(annotated)
+            if kind_for(source) != "video" or not os.path.isfile(source):
+                raise ValueError("select a loaded video")
+            from .video_export import export_video
+
+            directory = os.path.join(folder_paths.get_output_directory(),
+                                     "genkai_h3_exports")
+            os.makedirs(directory, exist_ok=True)
+            base = os.path.splitext(os.path.basename(source))[0]
+            name = _safe(f"{base[:70]}_edited_{secrets.token_hex(5)}.mp4")
+            destination = os.path.join(directory, name)
+            if not _contained(destination, directory):
+                raise ValueError("invalid export name")
+            try:
+                width, height, frames, has_audio = await asyncio.to_thread(
+                    export_video, source, destination,
+                    start=body.get("start"), end=body.get("end"),
+                    crop=body.get("crop"), mirror=body.get("mirror") is True,
+                    rotate=body.get("rotate"), resize=body.get("resize"),
+                    include_audio=body.get("include_audio") is not False)
+            except Exception:
+                if os.path.exists(destination):
+                    os.remove(destination)
+                raise
+            return web.json_response({
+                "file": f"genkai_h3_exports/{name} [output]",
+                "name": name, "width": width, "height": height,
+                "frames": frames, "has_audio": has_audio,
+            })
+        except (ValueError, TypeError) as exc:
+            return web.json_response({"error": str(exc)}, status=400)
+        except Exception as exc:
+            return web.json_response({"error": f"export failed: {exc}"}, status=500)
 
 
     @routes.get("/genkai/h3_media/capabilities")

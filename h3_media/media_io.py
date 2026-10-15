@@ -336,6 +336,14 @@ def load_audio(annotated, start=None, end=None):
 
 # --- video ------------------------------------------------------------------
 
+def _apply_rotate(frames, rotate):
+    """Turn decoded video before mirroring and screen-space cropping."""
+    turn = int(rotate or 0) % 360
+    if turn not in (0, 90, 180, 270):
+        raise ValueError("video rotation must be 0, 90, 180 or 270 degrees")
+    return torch.rot90(frames, -(turn // 90), dims=(1, 2)) if turn else frames
+
+
 def _apply_mirror(frames, mirror):
     """Flip [T, H, W, C] frames left-to-right.
 
@@ -381,7 +389,7 @@ def _apply_crop(frames, crop):
 
 
 def load_video_frames(annotated, fps=FPS, max_frames=None, start=None, end=None,
-                      crop=None, mirror=False, resize=None):
+                      crop=None, mirror=False, rotate=0, resize=None):
     """Decode to an IMAGE batch [N, H, W, 3] resampled to `fps`.
 
     `start`/`end` (seconds) trim the source before sampling; only the trimmed
@@ -400,7 +408,9 @@ def load_video_frames(annotated, fps=FPS, max_frames=None, start=None, end=None,
     # turn every decode failure into a misleading "PyAV missing" story.
     return _apply_crop(
         _apply_mirror(
-            _frames_via_av(path, fps, max_frames, start, end, cap),
+            _apply_rotate(
+                _frames_via_av(path, fps, max_frames, start, end, cap),
+                rotate),
             mirror), crop)
 
 
